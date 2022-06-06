@@ -1,0 +1,10 @@
+﻿{
+	"name": "MithrixTheAccursed",
+	"version_number": "0.8.4",
+	"website_url": "",
+	"description": "Fight against the Accursed King of Nothing in an even more intense boss battle.",
+	"dependencies": [
+		"bbepis-BepInExPack-5.4.9",
+		"RiskofThunder-HookGenPatcher-1.2.1"
+	]
+}
