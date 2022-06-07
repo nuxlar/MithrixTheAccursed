@@ -1,11 +1,11 @@
 # Mithrix the Accursed
 
-The Accursed King of Nothing is faster, stronger, and has some tricks up his sleeve to make the battle more intense. Combined aspects of Artifact of the King and Inferno into the boss battle. A lot of the stats and skills are configurable.
+The Accursed King of Nothing is faster, stronger, and has some tricks up his sleeve to make the battle more intense. Combined aspects of Artifact of the King and Inferno into the boss battle. A lot of the stats, skills, and options are configurable.
 
-	- Phase 1 a stronger, more agile enemy appears before you. The Accursed King is also immune to debuffs (configurable)
-	- Phase 2 skipped because boring
-	- Phase 3 still immune, attacks are more intense and fatal, spawns shadow clones if you don't take him out fast enough
-	- Phase 4 items are absorbed quickly, he is no longer immune but watch out for that slam attack
+	- Phase 1 The Accursed King is resistant/immune to debuffs (configurable) and has a twisted form (malachite, configurable - off by default)
+	- Phase 2 skipped because boring (configurable)
+	- Phase 3 still resistant/immune, attacks are more intense and fatal, spawns shadow clones if you don't take him out fast enough
+	- Phase 4 items are absorbed quickly, he is no longer resistant/immune but watch out for his slam attack
 
 ## Contact
 Reach out on discord with bugs/feedback **leon_#0235**
@@ -19,6 +19,13 @@ Reach out on discord with bugs/feedback **leon_#0235**
 
 
 ## Changelog
+**0.8.8**
+* Added config for Phase 2 skip
+* Added config for debuff resistance as the default instead of full immunity - raincoats without barriers and lower regen
+* Added config for Malachite Mithrix for a more dangerous arena (off by default)
+* refactored code
+* README edit
+
 **0.8.4**
 * Added debuff immunity to Mithrix (configurable)
 * refactored some more

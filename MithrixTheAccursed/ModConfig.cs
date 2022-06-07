@@ -5,7 +5,11 @@ namespace MithrixTheAccursed
     internal class ModConfig
     {
         public static ConfigEntry<bool> accurse;
+        public static ConfigEntry<bool> skipPhase2;
+        public static ConfigEntry<int> coatCount;
+        public static ConfigEntry<float> coatRegen;
         public static ConfigEntry<bool> debuffImmune;
+        public static ConfigEntry<bool> malachiteMithrix;
 
         public static ConfigEntry<float> basehealth;
         public static ConfigEntry<float> levelhealth;
@@ -49,7 +53,11 @@ namespace MithrixTheAccursed
         public static void InitConfig(ConfigFile config)
         {
             accurse = config.Bind("General", "Accurse", true, "Accurse the King of Nothing");
-            debuffImmune = config.Bind("General", "Debuff Immune", true, "The curse renders the King immune to debuffs");
+            skipPhase2 = config.Bind("General", "Skip Phase 2", true, "Skips the phase where only Lunar Chimera spawn");
+            coatCount = config.Bind("General", "Coat Count", 10, "Instead of being completely immune add raincoats (without the barrier)");
+            coatRegen = config.Bind("General", "Coat Regen", 1f, "How much time before a stack of raincoat block regens");
+            debuffImmune = config.Bind("General", "Debuff Immune", false, "The curse renders the King immune to debuffs");
+            malachiteMithrix = config.Bind("General", "Malachite Mithrix", false, "The curse corrupts the King's form (might make this appearance only or just keep it as an extra challenge)");
 
             basehealth = config.Bind("Stats", "BaseHealth", 1400f, "base health");
             levelhealth = config.Bind("Stats", "LevelHealth", 420f, "level health");

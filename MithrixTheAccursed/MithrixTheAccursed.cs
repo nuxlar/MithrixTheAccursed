@@ -10,7 +10,7 @@ using UnityEngine.AddressableAssets;
 
 namespace MithrixTheAccursed
 {
-    [BepInPlugin("com.zorp.MithrixTheAccursed", "MithrixTheAccursed", "0.8.4")]
+    [BepInPlugin("com.zorp.MithrixTheAccursed", "MithrixTheAccursed", "0.8.8")]
 
     public class MithrixTheAccursed : BaseUnityPlugin
     {
@@ -23,8 +23,7 @@ namespace MithrixTheAccursed
             if (ModConfig.accurse.Value)
             {
                 On.RoR2.Run.Start += OnRunStart;
-                if (ModConfig.debuffImmune.Value)
-                    On.RoR2.Items.ImmuneToDebuffBehavior.TryApplyOverride += TryApplyOverride;
+                On.RoR2.Items.ImmuneToDebuffBehavior.TryApplyOverride += TryApplyOverride;
                 CharacterMaster.onStartGlobal += new Action<CharacterMaster>(MasterChanges);
                 On.EntityStates.BrotherMonster.ExitSkyLeap.OnEnter += ExitSkyLeapOnEnter;
                 On.EntityStates.BrotherMonster.SlideIntroState.OnEnter += SlideIntroStateOnEnter;
@@ -32,7 +31,8 @@ namespace MithrixTheAccursed
                 On.EntityStates.BrotherMonster.WeaponSlam.OnEnter += WeaponSlamOnEnter;
                 On.EntityStates.BrotherMonster.WeaponSlam.FixedUpdate += WeaponSlamFixedUpdate;
                 On.EntityStates.BrotherMonster.Weapon.FireLunarShards.OnEnter += FireLunarShardsOnEnter;
-                On.EntityStates.Missions.BrotherEncounter.Phase2.OnEnter += Phase2OnEnter;
+                if (ModConfig.skipPhase2.Value)
+                    On.EntityStates.Missions.BrotherEncounter.Phase2.OnEnter += Phase2OnEnter;
                 On.EntityStates.BrotherMonster.FistSlam.OnEnter += FistSlamOnEnter;
                 On.EntityStates.BrotherMonster.SpellChannelEnterState.OnEnter += SpellChannelEnterStateOnEnter;
                 On.EntityStates.BrotherMonster.SpellChannelState.OnEnter += SpellChannelStateOnEnter;
@@ -122,7 +122,12 @@ namespace MithrixTheAccursed
         {
             string name = master.name;
             if (name == "BrotherMaster(Clone)")
-                master.inventory.GiveItem(DLC1Content.Items.ImmuneToDebuff);
+            {
+                if (ModConfig.coatCount.Value > 0)
+                    master.inventory.GiveItem(DLC1Content.Items.ImmuneToDebuff, ModConfig.coatCount.Value);
+                if (ModConfig.malachiteMithrix.Value)
+                    master.inventory.GiveEquipmentString(RoR2Content.Equipment.AffixPoison.name);
+            }
         }
 
         private static bool TryApplyOverride(On.RoR2.Items.ImmuneToDebuffBehavior.orig_TryApplyOverride orig, CharacterBody body)
@@ -130,17 +135,32 @@ namespace MithrixTheAccursed
             RoR2.Items.ImmuneToDebuffBehavior component = body.GetComponent<RoR2.Items.ImmuneToDebuffBehavior>();
             if ((bool)component)
             {
-                if (body.name == "BrotherBody(Clone)" || component.isProtected)
+                if (component.isProtected)
                     return true;
-                if (body.HasBuff(DLC1Content.Buffs.ImmuneToDebuffReady) && (bool)component.healthComponent)
+                if (body.name == "BrotherBody(Clone)")
                 {
-                    component.healthComponent.AddBarrier(0.1f * component.healthComponent.fullCombinedHealth);
-                    body.RemoveBuff(DLC1Content.Buffs.ImmuneToDebuffReady);
-                    EffectManager.SimpleImpactEffect(Addressables.LoadAssetAsync<GameObject>((object)"RoR2/DLC1/ImmuneToDebuff/ImmuneToDebuffEffect.prefab").WaitForCompletion(), body.corePosition, Vector3.up, true);
-                    if (!body.HasBuff(DLC1Content.Buffs.ImmuneToDebuffReady))
-                        body.AddTimedBuff(DLC1Content.Buffs.ImmuneToDebuffCooldown, 5f);
-                    component.isProtected = true;
-                    return true;
+                    if (ModConfig.debuffImmune.Value)
+                        return true;
+                    if (body.HasBuff(DLC1Content.Buffs.ImmuneToDebuffReady) && !ModConfig.debuffImmune.Value)
+                    {
+                        body.RemoveBuff(DLC1Content.Buffs.ImmuneToDebuffReady);
+                        if (!body.HasBuff(DLC1Content.Buffs.ImmuneToDebuffReady))
+                            body.AddTimedBuff(DLC1Content.Buffs.ImmuneToDebuffCooldown, ModConfig.coatRegen.Value);
+                        component.isProtected = true;
+                        return true;
+                    }
+                } else
+                {
+                    if (body.HasBuff(DLC1Content.Buffs.ImmuneToDebuffReady) && (bool)component.healthComponent)
+                    {
+                        component.healthComponent.AddBarrier(0.1f * component.healthComponent.fullCombinedHealth);
+                        body.RemoveBuff(DLC1Content.Buffs.ImmuneToDebuffReady);
+                        EffectManager.SimpleImpactEffect(Addressables.LoadAssetAsync<GameObject>((object)"RoR2/DLC1/ImmuneToDebuff/ImmuneToDebuffEffect.prefab").WaitForCompletion(), body.corePosition, Vector3.up, true);
+                        if (!body.HasBuff(DLC1Content.Buffs.ImmuneToDebuffReady))
+                            body.AddTimedBuff(DLC1Content.Buffs.ImmuneToDebuffCooldown, 5f);
+                        component.isProtected = true;
+                        return true;
+                    }
                 }
             }
             return false;
