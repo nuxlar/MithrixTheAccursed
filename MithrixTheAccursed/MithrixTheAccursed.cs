@@ -10,7 +10,7 @@ using UnityEngine.AddressableAssets;
 
 namespace MithrixTheAccursed
 {
-    [BepInPlugin("com.zorp.MithrixTheAccursed", "MithrixTheAccursed", "0.8.8")]
+    [BepInPlugin("com.zorp.MithrixTheAccursed", "MithrixTheAccursed", "0.9.2")]
 
     public class MithrixTheAccursed : BaseUnityPlugin
     {
@@ -26,6 +26,8 @@ namespace MithrixTheAccursed
                 On.RoR2.Items.ImmuneToDebuffBehavior.TryApplyOverride += TryApplyOverride;
                 CharacterMaster.onStartGlobal += new Action<CharacterMaster>(MasterChanges);
                 On.EntityStates.BrotherMonster.ExitSkyLeap.OnEnter += ExitSkyLeapOnEnter;
+                On.EntityStates.FrozenState.OnEnter += FrozenStateOnEnter;
+                On.RoR2.CharacterBody.AddTimedBuff_BuffDef_float += AddTimedBuff_BuffDef_float;
                 On.EntityStates.BrotherMonster.SlideIntroState.OnEnter += SlideIntroStateOnEnter;
                 On.EntityStates.BrotherMonster.SprintBash.OnEnter += SprintBashOnEnter;
                 On.EntityStates.BrotherMonster.WeaponSlam.OnEnter += WeaponSlamOnEnter;
@@ -79,6 +81,7 @@ namespace MithrixTheAccursed
 
             WeaponSlam.duration = (3.5f / ModConfig.baseattackspeed.Value);
             HoldSkyLeap.duration = ModConfig.JumpPause.Value;
+            ExitSkyLeap.waveProjectileCount = ModConfig.JumpWaveCount.Value;
             ExitSkyLeap.cloneCount = ModConfig.clonecount.Value;
             ExitSkyLeap.cloneDuration = ModConfig.cloneduration.Value;
             ExitSkyLeap.recastChance = ModConfig.JumpRecast.Value;
@@ -118,15 +121,36 @@ namespace MithrixTheAccursed
             AdjustStats();
             orig(self);
         }
+
+        private void FrozenStateOnEnter(On.EntityStates.FrozenState.orig_OnEnter orig, EntityStates.FrozenState self)
+        {
+            if (self.characterBody.name == "BrotherBody(Clone)")
+                return;
+            orig(self);
+        }
+
+
+        private void AddTimedBuff_BuffDef_float(On.RoR2.CharacterBody.orig_AddTimedBuff_BuffDef_float orig, CharacterBody self, BuffDef buffDef, float duration)
+        {
+            if (self.name == "BrotherBody(Clone)" && buffDef == RoR2Content.Buffs.Nullified)
+                return;
+            orig(self, buffDef, duration);
+        }
+
         public void MasterChanges(CharacterMaster master)
         {
             string name = master.name;
             if (name == "BrotherMaster(Clone)")
             {
-                if (ModConfig.coatCount.Value > 0)
-                    master.inventory.GiveItem(DLC1Content.Items.ImmuneToDebuff, ModConfig.coatCount.Value);
+                CharacterBody MithrixBody = master.GetBody();
+
+                if (ModConfig.debuffImmune.Value)
+                    master.inventory.GiveItem(DLC1Content.Items.ImmuneToDebuff);
                 if (ModConfig.malachiteMithrix.Value)
+                {
                     master.inventory.GiveEquipmentString(RoR2Content.Equipment.AffixPoison.name);
+                    MithrixBody.AddBuff(RoR2Content.Buffs.AffixPoison);
+                }
             }
         }
 
@@ -141,14 +165,6 @@ namespace MithrixTheAccursed
                 {
                     if (ModConfig.debuffImmune.Value)
                         return true;
-                    if (body.HasBuff(DLC1Content.Buffs.ImmuneToDebuffReady) && !ModConfig.debuffImmune.Value)
-                    {
-                        body.RemoveBuff(DLC1Content.Buffs.ImmuneToDebuffReady);
-                        if (!body.HasBuff(DLC1Content.Buffs.ImmuneToDebuffReady))
-                            body.AddTimedBuff(DLC1Content.Buffs.ImmuneToDebuffCooldown, ModConfig.coatRegen.Value);
-                        component.isProtected = true;
-                        return true;
-                    }
                 } else
                 {
                     if (body.HasBuff(DLC1Content.Buffs.ImmuneToDebuffReady) && (bool)component.healthComponent)
@@ -171,15 +187,10 @@ namespace MithrixTheAccursed
                 if (self.isAuthority)
                 {
                     if (self.fixedAge == 0.45f * self.duration)
-                    {
-                        self.FireRingAuthority();
-                    }
-
+                        self.FireRingAuthority();   
                     if (self.fixedAge == 0.9f * self.duration)
-                {
-                    self.FireRingAuthority();
+                        self.FireRingAuthority();
                 }
-                    }
                 orig(self);
             }
 
@@ -236,14 +247,15 @@ namespace MithrixTheAccursed
                         {
                             hasfired = true;
                             Logger.LogDebug("modeltransformed");
-                            float num = 360f / ModConfig.SlamOrbCount.Value;
+                            float num = 360f / ModConfig.SlamWaveProjectileCount.Value;
                             Vector3 point = Vector3.ProjectOnPlane(self.inputBank.aimDirection, Vector3.up);
                             Transform transform2 = self.FindModelChild(WeaponSlam.muzzleString);
                             Vector3 Position = transform2.position;
-                            for (int i = 0; i < ModConfig.SlamOrbCount.Value; i++)
+                            for (int i = 0; i < ModConfig.SlamWaveProjectileCount.Value; i++)
                             {
                                 Vector3 forward = Quaternion.AngleAxis(num * (float)i, Vector3.up) * point;
                                 ProjectileManager.instance.FireProjectile(FistSlam.waveProjectilePrefab, Position, Util.QuaternionSafeLookRotation(forward), self.gameObject, self.characterBody.damage * FistSlam.waveProjectileDamageCoefficient, FistSlam.waveProjectileForce, Util.CheckRoll(self.characterBody.crit, self.characterBody.master), DamageColorIndex.Default, null, -1f);
+                                ProjectileManager.instance.FireProjectile(WeaponSlam.waveProjectilePrefab, Position, Util.QuaternionSafeLookRotation(forward), self.gameObject, self.characterBody.damage * WeaponSlam.waveProjectileDamageCoefficient, WeaponSlam.waveProjectileForce, Util.CheckRoll(self.characterBody.crit, self.characterBody.master), DamageColorIndex.Default, null, -1f);
                             }
 
                         }
