@@ -10,7 +10,7 @@ using UnityEngine.AddressableAssets;
 
 namespace MithrixTheAccursed
 {
-    [BepInPlugin("com.zorp.MithrixTheAccursed", "MithrixTheAccursed", "0.9.2")]
+    [BepInPlugin("com.zorp.MithrixTheAccursed", "MithrixTheAccursed", "0.9.5")]
 
     public class MithrixTheAccursed : BaseUnityPlugin
     {
@@ -26,13 +26,17 @@ namespace MithrixTheAccursed
                 On.RoR2.Items.ImmuneToDebuffBehavior.TryApplyOverride += TryApplyOverride;
                 CharacterMaster.onStartGlobal += new Action<CharacterMaster>(MasterChanges);
                 On.EntityStates.BrotherMonster.ExitSkyLeap.OnEnter += ExitSkyLeapOnEnter;
-                On.EntityStates.FrozenState.OnEnter += FrozenStateOnEnter;
-                On.RoR2.CharacterBody.AddTimedBuff_BuffDef_float += AddTimedBuff_BuffDef_float;
+                if (ModConfig.debuffResistance.Value)
+                {
+                    On.EntityStates.FrozenState.OnEnter += FrozenStateOnEnter;
+                    On.RoR2.CharacterBody.AddTimedBuff_BuffDef_float += AddTimedBuff_BuffDef_float;
+                }
                 On.EntityStates.BrotherMonster.SlideIntroState.OnEnter += SlideIntroStateOnEnter;
                 On.EntityStates.BrotherMonster.SprintBash.OnEnter += SprintBashOnEnter;
                 On.EntityStates.BrotherMonster.WeaponSlam.OnEnter += WeaponSlamOnEnter;
                 On.EntityStates.BrotherMonster.WeaponSlam.FixedUpdate += WeaponSlamFixedUpdate;
                 On.EntityStates.BrotherMonster.Weapon.FireLunarShards.OnEnter += FireLunarShardsOnEnter;
+                On.EntityStates.Missions.BrotherEncounter.Phase3.OnEnter += Phase3OnEnter;
                 if (ModConfig.skipPhase2.Value)
                     On.EntityStates.Missions.BrotherEncounter.Phase2.OnEnter += Phase2OnEnter;
                 On.EntityStates.BrotherMonster.FistSlam.OnEnter += FistSlamOnEnter;
@@ -47,7 +51,7 @@ namespace MithrixTheAccursed
             }
         }
 
-        private void AdjustStats()
+        private void AdjustBaseStats()
         {
             Logger.LogMessage("Adjusting Stats");
             CharacterBody MithrixBody = Mithrix.GetComponent<CharacterBody>();
@@ -62,27 +66,27 @@ namespace MithrixTheAccursed
 
             MithrixBody.baseAttackSpeed = ModConfig.baseattackspeed.Value;
 
-            MithrixBody.baseMoveSpeed = ModConfig.basespeed.Value;
-            MithrixBody.baseAcceleration = ModConfig.acceleration.Value;
-            MithrixBody.baseJumpPower = ModConfig.jumpingpower.Value;
-            MithrixDirection.turnSpeed = ModConfig.turningspeed.Value;
+            MithrixBody.baseMoveSpeed = ModConfig.basespeed.Value * 0.85f;
+            MithrixBody.baseAcceleration = ModConfig.acceleration.Value * 0.85f;
+            MithrixBody.baseJumpPower = ModConfig.jumpingpower.Value * 0.85f;
+            MithrixDirection.turnSpeed = ModConfig.turningspeed.Value * 0.85f;
 
-            MithrixBody.baseArmor = ModConfig.basearmor.Value;
+            MithrixBody.baseArmor = ModConfig.basearmor.Value * 0.85f;
 
             MithrixBody.baseDamage = ModConfig.basedamage.Value;
             MithrixBody.levelDamage = ModConfig.leveldamage.Value;
 
             ProjectileSteerTowardTarget component = FireLunarShards.projectilePrefab.GetComponent<ProjectileSteerTowardTarget>();
-            component.rotationSpeed = ModConfig.ShardHoming.Value;
+            component.rotationSpeed = ModConfig.ShardHoming.Value * 0.85f;
             ProjectileDirectionalTargetFinder component2 = FireLunarShards.projectilePrefab.GetComponent<ProjectileDirectionalTargetFinder>();
-            component2.lookRange = ModConfig.ShardRange.Value;
-            component2.lookCone = ModConfig.ShardCone.Value;
+            component2.lookRange = ModConfig.ShardRange.Value * 0.85f;
+            component2.lookCone = ModConfig.ShardCone.Value / 2;
             component2.allowTargetLoss = true;
 
             WeaponSlam.duration = (3.5f / ModConfig.baseattackspeed.Value);
-            HoldSkyLeap.duration = ModConfig.JumpPause.Value;
-            ExitSkyLeap.waveProjectileCount = ModConfig.JumpWaveCount.Value;
-            ExitSkyLeap.cloneCount = ModConfig.clonecount.Value;
+            HoldSkyLeap.duration = ModConfig.JumpPause.Value * 2;
+            ExitSkyLeap.waveProjectileCount = ModConfig.JumpWaveCount.Value / 2;
+            ExitSkyLeap.cloneCount = ModConfig.clonecount.Value * PlayerCharacterMasterController.instances.Count;
             ExitSkyLeap.cloneDuration = ModConfig.cloneduration.Value;
             ExitSkyLeap.recastChance = ModConfig.JumpRecast.Value;
             UltChannelState.waveProjectileCount = ModConfig.UltimateWaves.Value;
@@ -90,7 +94,7 @@ namespace MithrixTheAccursed
             UltChannelState.totalWaves = ModConfig.UltimateCount.Value;
         }
 
-        private void AdjustSkills()
+        private void AdjustBaseSkills()
         {
             SkillLocator SklLocate = Mithrix.GetComponent<SkillLocator>();
             SkillFamily Hammer = SklLocate.primary.skillFamily;
@@ -114,11 +118,46 @@ namespace MithrixTheAccursed
             UltChange.baseMaxStock = 5;
         }
 
+        private void AdjustPhase3Stats()
+        {
+            // beefs up most stats by 10% per player
+            Logger.LogMessage("Adjusting Phase 3 Stats");
+            int playerCount = PlayerCharacterMasterController.instances.Count;
+            float multiplier = 0.1f * playerCount;
+            CharacterBody MithrixBody = Mithrix.GetComponent<CharacterBody>();
+            CharacterDirection MithrixDirection = Mithrix.GetComponent<CharacterDirection>();
+
+            MithrixBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier);
+            MithrixBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier);
+
+            MithrixBody.baseAttackSpeed = ModConfig.baseattackspeed.Value + (ModConfig.baseattackspeed.Value * multiplier);
+
+            MithrixBody.baseMoveSpeed = ModConfig.basespeed.Value + (ModConfig.basespeed.Value * multiplier);
+            MithrixBody.baseAcceleration = ModConfig.acceleration.Value + (ModConfig.acceleration.Value * multiplier);
+            MithrixBody.baseJumpPower = ModConfig.jumpingpower.Value + (ModConfig.jumpingpower.Value * multiplier);
+            MithrixDirection.turnSpeed = ModConfig.turningspeed.Value + (ModConfig.turningspeed.Value * multiplier);
+
+            MithrixBody.baseArmor = ModConfig.basearmor.Value + (ModConfig.basearmor.Value * multiplier);
+
+            MithrixBody.baseDamage = ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier);
+            MithrixBody.levelDamage = ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier);
+
+            ProjectileSteerTowardTarget component = FireLunarShards.projectilePrefab.GetComponent<ProjectileSteerTowardTarget>();
+            component.rotationSpeed = ModConfig.ShardHoming.Value + (ModConfig.ShardHoming.Value * multiplier);
+            ProjectileDirectionalTargetFinder component2 = FireLunarShards.projectilePrefab.GetComponent<ProjectileDirectionalTargetFinder>();
+            component2.lookRange = ModConfig.ShardRange.Value + (ModConfig.ShardRange.Value * multiplier);
+            component2.lookCone = ModConfig.ShardCone.Value + (ModConfig.ShardCone.Value * multiplier);
+
+            WeaponSlam.duration = (3.5f / (ModConfig.baseattackspeed.Value + (ModConfig.baseattackspeed.Value * multiplier)));
+            ExitSkyLeap.waveProjectileCount = ModConfig.JumpWaveCount.Value;
+            ExitSkyLeap.cloneCount = ModConfig.clonecount.Value * playerCount;
+        }
+
         private void OnRunStart(On.RoR2.Run.orig_Start orig, Run self)
         {
             Logger.LogMessage("Accursing the King of Nothing");
-            AdjustSkills();
-            AdjustStats();
+            AdjustBaseSkills();
+            AdjustBaseStats();
             orig(self);
         }
 
@@ -148,8 +187,8 @@ namespace MithrixTheAccursed
                     master.inventory.GiveItem(DLC1Content.Items.ImmuneToDebuff);
                 if (ModConfig.malachiteMithrix.Value)
                 {
-                    master.inventory.GiveEquipmentString(RoR2Content.Equipment.AffixPoison.name);
-                    MithrixBody.AddBuff(RoR2Content.Buffs.AffixPoison);
+                    master.inventory.GiveEquipmentString(RoR2Content.Equipment.AffixLunar.name);
+                    MithrixBody.AddBuff(RoR2Content.Buffs.AffixLunar);
                 }
             }
         }
@@ -190,8 +229,8 @@ namespace MithrixTheAccursed
                         self.FireRingAuthority();   
                     if (self.fixedAge == 0.9f * self.duration)
                         self.FireRingAuthority();
-                }
-                orig(self);
+            }
+            orig(self);
             }
 
         private void SlideIntroStateOnEnter(On.EntityStates.BrotherMonster.SlideIntroState.orig_OnEnter orig, SlideIntroState self)
@@ -310,6 +349,12 @@ namespace MithrixTheAccursed
             self.PreEncounterBegin();
             self.outer.SetNextState(new EntityStates.Missions.BrotherEncounter.Phase3());
         }
+        private void Phase3OnEnter(On.EntityStates.Missions.BrotherEncounter.Phase3.orig_OnEnter orig, EntityStates.Missions.BrotherEncounter.Phase3 self)
+        {
+            AdjustPhase3Stats();
+            orig.Invoke(self);
+        }
+
 
         private static void FistSlamOnEnter(On.EntityStates.BrotherMonster.FistSlam.orig_OnEnter orig, FistSlam self)
         {
@@ -322,7 +367,7 @@ namespace MithrixTheAccursed
                 float num1 = 8f;
                 float num2 = 360f / num1;
                 Vector3 vector3 = Vector3.ProjectOnPlane(self.inputBank.aimDirection, Vector3.up);
-                Vector3 position = self.FindModelChild(WeaponSlam.muzzleString).position + new Vector3(UnityEngine.Random.Range(-50f, 50f), 0.0f, UnityEngine.Random.Range(-50f, 50f));
+                Vector3 position = self.FindModelChild(FistSlam.muzzleString).position;
                 for (int index = 0; index < num1; ++index)
                 {
                     Vector3 forward = Quaternion.AngleAxis(num2 * index, Vector3.up) * vector3;
