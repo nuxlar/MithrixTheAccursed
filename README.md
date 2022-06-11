@@ -42,6 +42,9 @@ Reach out on discord with bugs/feedback **leon_#0235**
 If you like what I'm doing contribute to my caffeine addiction! https://ko-fi.com/nuxlar
 
 ## Changelog
+**0.9.6**
+* done goofed and left perfected mithrix instead of malachite
+
 **0.9.5**
 * Adds config for debuff resistance (freeze/nullify)
 * Makes Phase 1 Mithrix 15% weaker with some stats

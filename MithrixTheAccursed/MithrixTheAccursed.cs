@@ -10,7 +10,7 @@ using UnityEngine.AddressableAssets;
 
 namespace MithrixTheAccursed
 {
-    [BepInPlugin("com.zorp.MithrixTheAccursed", "MithrixTheAccursed", "0.9.5")]
+    [BepInPlugin("com.zorp.MithrixTheAccursed", "MithrixTheAccursed", "0.9.6")]
 
     public class MithrixTheAccursed : BaseUnityPlugin
     {
@@ -187,8 +187,8 @@ namespace MithrixTheAccursed
                     master.inventory.GiveItem(DLC1Content.Items.ImmuneToDebuff);
                 if (ModConfig.malachiteMithrix.Value)
                 {
-                    master.inventory.GiveEquipmentString(RoR2Content.Equipment.AffixLunar.name);
-                    MithrixBody.AddBuff(RoR2Content.Buffs.AffixLunar);
+                    master.inventory.GiveEquipmentString(RoR2Content.Equipment.AffixPoison.name);
+                    MithrixBody.AddBuff(RoR2Content.Buffs.AffixPoison);
                 }
             }
         }
@@ -229,7 +229,7 @@ namespace MithrixTheAccursed
                         self.FireRingAuthority();   
                     if (self.fixedAge == 0.9f * self.duration)
                         self.FireRingAuthority();
-            }
+                }
             orig(self);
             }
 
@@ -390,8 +390,8 @@ namespace MithrixTheAccursed
           SpellChannelState self)
         {
 
-            SpellChannelState.stealInterval = 0.05f;
-            SpellChannelState.delayBeforeBeginningSteal = 0.0f;
+            SpellChannelState.stealInterval = 3f;
+            SpellChannelState.delayBeforeBeginningSteal = 1f;
             SpellChannelState.maxDuration = 15f;
             orig.Invoke(self);
         }
