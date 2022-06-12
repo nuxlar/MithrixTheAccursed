@@ -53,10 +53,8 @@ namespace MithrixTheAccursed
         public static void InitConfig(ConfigFile config)
         {
             accurse = config.Bind("General", "Accurse", true, "Accurse the King of Nothing");
-            skipPhase2 = config.Bind("General", "Skip Phase 2", true, "Skips the phase where only Lunar Chimera spawn");
             debuffImmune = config.Bind("General", "Debuff Immune", false, "The curse renders the King immune to debuffs");
             debuffResistance = config.Bind("General", "Freeze/Nullify Immune", true, "Toggle the debuff resistance");
-            malachiteMithrix = config.Bind("General", "Malachite Mithrix", false, "The curse corrupts the King's form (might make this appearance only or just keep it as an extra challenge)");
 
             basehealth = config.Bind("Stats", "BaseHealth", 1750f, "base health");
             levelhealth = config.Bind("Stats", "LevelHealth", 350f, "level health");
@@ -88,7 +86,6 @@ namespace MithrixTheAccursed
             UltimateWaves = config.Bind("Skillmods", "WavePerShot", 18, "waves fired by ultimate per shot");
             UltimateCount = config.Bind("Skillmods", "WaveShots", 9, "Total shots of ultimate");
             UltimateDuration = config.Bind("Skillmods", "WaveDuration", 7.5f, "how long ultimate lasts");
-            clonecount = config.Bind("Skillmods", "CloneCount", 2, "clones spawned in phase 3 by jump attack PER PLAYER");
             cloneduration = config.Bind("Skillmods", "CloneDuration", 30, "how long clones take to despawn (like happiest mask)");
             JumpRecast = config.Bind("Skillmods", "RecastChance", 0f, "chance mithrix has to recast his jump skill. USE WITH CAUTION.");
             JumpPause = config.Bind("Skillmods", "JumpDelay", 0.2f, "How long Mithrix spends in the air when using his jump special");

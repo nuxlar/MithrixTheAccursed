@@ -3,30 +3,22 @@
 
 The Accursed King of Nothing is faster, stronger, and has some tricks up his sleeve to make the battle more intense. Combined aspects of Artifact of the King and Inferno into the boss battle.
 
-	- Phase 1 The Accursed King is resistant to debuffs and has a twisted form
-	- Phase 2 skipped
-	- Phase 3 The Accursed King powers up, he's stronger and attacks are deadlier, spawns shadow clones if you don't take him out fast enough
-	- Phase 4 items are absorbed quickly, watch out for his slam attack
+	- Phase 1 The Accursed King greets you and is resistant to debuffs (freeze/nullify)
+	- Phase 2 He returns to test out his creations
+	- Phase 3 The Accursed King's form becomes corrupted, releasing glass clones to aid him in battle
+	- Phase 4 He absorbs items quickly and releases a deadly slam attack
 
 Most stuff is configurable:
 
 	- Stats
 	- Skills
-	- Twisted form (malachite - off by default)
 	- Full debuff immunity (scorpions still work)
 	- Debuff Resistance (freeze/nullify - tentabauble)
-	- Phase 2 skip
 
 
 ## Plans
-* Make Mithix become more difficult throughout the fight
-* Make Mithrix scale per player AND per loop (more loops, more players, more insano style Mithrix)
-* Make a fully custom flow for the phases
-	* Phase 1 regular buffed Mithrix that's resistant to debuffs (freezing/tentabauble) (I'll keep full immunity as a config for the masochists)
-	* Phase 2 basically regular Phase 3
-	* Phase 3 spawns in Perfected with shadow clones (1 per player), lunar chimera that spawn are perfected as well, maybe make his attacks more intense and beefier stats using a multiplier
-	* Phase 4 slams more often, debuff immune to make it scarier? cuz he usually dissolves once everyone gets items back.
-* Make the flow configurable (preset difficulties maybe, Lunar - AotK + Inferno with some accursed sprinkles, Accursed - My vision for the fight, Commando Must Die - For the masochistic risk player)
+* Make Mithrix scale per loop (more loops, more players, more insano style Mithrix)
+* Make the flow configurable (preset difficulties mayhaps, Lunar - AotK + Inferno with some accursed sprinkles, Accursed - My vision for the fight, Commando Must Die - For the masochistic risk player)
 
 ## Contact
 Reach out on discord with bugs/feedback **leon_#0235**
@@ -42,6 +34,19 @@ Reach out on discord with bugs/feedback **leon_#0235**
 If you like what I'm doing contribute to my caffeine addiction! https://ko-fi.com/nuxlar
 
 ## Changelog
+**1.0.0**
+* v1 release!
+* Implemented a custom flow for the fight
+* Fixed slow item steal (0.9.6 goof)
+* Reduced clone scaling (1 per player - maxes out at 4 cuz lag)
+* Removed some config (constant Malachite Mithrix, clone count, phase 2 skip)
+* Removed the scuffed weaken
+* Mithrix gains a 15% stat buff phase 2 (scales 15% per player)
+* Mithrix gains a 30% stat buff phase 3 (scales 30% per player)
+* Mithrix becomes corrupted in phase 3
+* fixed placement of phase 4 pizza slam
+* README edits
+
 **0.9.6**
 * done goofed and left perfected mithrix instead of malachite
 
