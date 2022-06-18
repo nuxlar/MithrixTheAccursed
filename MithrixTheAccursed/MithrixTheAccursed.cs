@@ -71,8 +71,20 @@ namespace MithrixTheAccursed
             MithrixMotor.airControl = ModConfig.aircontrol.Value;
             MithrixMotor.jumpCount = ModConfig.jumpcount.Value;
 
-            MithrixBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier);
-            MithrixBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier);
+            if (ModConfig.umbralMithrix.Value)
+            {
+                MithrixBody.baseMaxHealth = (ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier)) / 10;
+                MithrixBody.levelMaxHealth = (ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier)) / 10;
+                MithrixBody.baseDamage = (ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier)) * 100 / 4;
+                MithrixBody.levelDamage = (ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier)) * 100 / 4;
+
+            } else
+            {
+                MithrixBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier);
+                MithrixBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier);
+                MithrixBody.baseDamage = ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier);
+                MithrixBody.levelDamage = ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier);
+            }
 
             MithrixBody.baseAttackSpeed = ModConfig.baseattackspeed.Value + (ModConfig.baseattackspeed.Value * multiplier);
 
@@ -82,9 +94,6 @@ namespace MithrixTheAccursed
             MithrixDirection.turnSpeed = ModConfig.turningspeed.Value + (ModConfig.turningspeed.Value * multiplier);
 
             MithrixBody.baseArmor = ModConfig.basearmor.Value + (ModConfig.basearmor.Value * multiplier);
-
-            MithrixBody.baseDamage = ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier);
-            MithrixBody.levelDamage = ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier);
 
             ProjectileSteerTowardTarget component = FireLunarShards.projectilePrefab.GetComponent<ProjectileSteerTowardTarget>();
             component.rotationSpeed = ModConfig.ShardHoming.Value + (ModConfig.ShardHoming.Value * multiplier);
@@ -136,8 +145,21 @@ namespace MithrixTheAccursed
             CharacterBody MithrixBody = Mithrix.GetComponent<CharacterBody>();
             CharacterDirection MithrixDirection = Mithrix.GetComponent<CharacterDirection>();
 
-            MithrixBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier);
-            MithrixBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier);
+            if (ModConfig.umbralMithrix.Value)
+            {
+                MithrixBody.baseMaxHealth = (ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier)) / 10;
+                MithrixBody.levelMaxHealth = (ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier)) / 10;
+                MithrixBody.baseDamage = (ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier)) * 100 / 4;
+                MithrixBody.levelDamage = (ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier)) * 100 / 4;
+
+            }
+            else
+            {
+                MithrixBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier);
+                MithrixBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier);
+                MithrixBody.baseDamage = ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier);
+                MithrixBody.levelDamage = ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier);
+            }
 
             MithrixBody.baseAttackSpeed = ModConfig.baseattackspeed.Value + (ModConfig.baseattackspeed.Value * multiplier);
 
@@ -147,9 +169,6 @@ namespace MithrixTheAccursed
             MithrixDirection.turnSpeed = ModConfig.turningspeed.Value + (ModConfig.turningspeed.Value * multiplier);
 
             MithrixBody.baseArmor = ModConfig.basearmor.Value + (ModConfig.basearmor.Value * multiplier);
-
-            MithrixBody.baseDamage = ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier);
-            MithrixBody.levelDamage = ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier);
 
             ProjectileSteerTowardTarget component = FireLunarShards.projectilePrefab.GetComponent<ProjectileSteerTowardTarget>();
             component.rotationSpeed = ModConfig.ShardHoming.Value + (ModConfig.ShardHoming.Value * multiplier);
@@ -169,6 +188,22 @@ namespace MithrixTheAccursed
             CharacterBody MithrixBody = Mithrix.GetComponent<CharacterBody>();
             CharacterDirection MithrixDirection = Mithrix.GetComponent<CharacterDirection>();
 
+            if (ModConfig.umbralMithrix.Value)
+            {
+                MithrixBody.baseMaxHealth = (ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier)) / 10;
+                MithrixBody.levelMaxHealth = (ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier)) / 10;
+                MithrixBody.baseDamage = (ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier)) * 100 / 4;
+                MithrixBody.levelDamage = (ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier)) * 100 / 4;
+
+            }
+            else
+            {
+                MithrixBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier);
+                MithrixBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier);
+                MithrixBody.baseDamage = ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier);
+                MithrixBody.levelDamage = ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier);
+            }
+
             MithrixBody.baseAttackSpeed = ModConfig.baseattackspeed.Value + (ModConfig.baseattackspeed.Value * multiplier);
 
             MithrixBody.baseMoveSpeed = ModConfig.basespeed.Value + (ModConfig.basespeed.Value * multiplier);
@@ -177,9 +212,6 @@ namespace MithrixTheAccursed
             MithrixDirection.turnSpeed = ModConfig.turningspeed.Value + (ModConfig.turningspeed.Value * multiplier);
 
             MithrixBody.baseArmor = ModConfig.basearmor.Value + (ModConfig.basearmor.Value * multiplier);
-
-            MithrixBody.baseDamage = ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier);
-            MithrixBody.levelDamage = ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier);
 
             ProjectileSteerTowardTarget component = FireLunarShards.projectilePrefab.GetComponent<ProjectileSteerTowardTarget>();
             component.rotationSpeed = ModConfig.ShardHoming.Value + (ModConfig.ShardHoming.Value * multiplier);
@@ -204,8 +236,19 @@ namespace MithrixTheAccursed
             CharacterBody MithrixHurtBody = MithrixHurt.GetComponent<CharacterBody>();
             CharacterDirection MithrixHurtDirection = MithrixHurt.GetComponent<CharacterDirection>();
 
-            MithrixHurtBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier);
-            MithrixHurtBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier);
+            if (ModConfig.umbralMithrix.Value)
+            {
+                MithrixHurtBody.baseMaxHealth = (ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier)) / 10;
+                MithrixHurtBody.levelMaxHealth = (ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier)) / 10;
+                MithrixHurtBody.baseDamage = (ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier)) * 100 / 4;
+                MithrixHurtBody.levelDamage = (ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier)) * 100 / 4;
+
+            }
+            else
+            {
+                MithrixHurtBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier);
+                MithrixHurtBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier);
+            }
 
             MithrixHurtBody.baseMoveSpeed = ModConfig.basespeed.Value + (ModConfig.basespeed.Value * multiplier);
             MithrixHurtBody.baseAcceleration = ModConfig.acceleration.Value + (ModConfig.acceleration.Value * multiplier);
@@ -512,8 +555,6 @@ namespace MithrixTheAccursed
                 {
                     Inventory cloneInventory = spawnResult.spawnedInstance.GetComponent<Inventory>();
                     cloneInventory.GiveItem(RoR2Content.Items.HealthDecay, ExitSkyLeap.cloneDuration);
-                    if (ModConfig.umbralMithrix.Value)
-                        cloneInventory.GiveItem(RoR2Content.Items.InvadingDoppelganger);
                 };
                 DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
             }

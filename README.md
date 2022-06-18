@@ -15,7 +15,7 @@ Most stuff is configurable (IF YOURE UPDATING FROM 1.0.0 DELETE YOUR MITHRIXTHEA
 	- Skills
 	- Full debuff immunity (scorpions still work)
 	- Debuff Resistance (immune to freeze/tentabauble)
-	- Umbral Mithrix (Mithrix becomes a shadow of himself for all phases -DMG +HP)
+	- Umbral Mithrix (Mithrix becomes a shadow of himself for all phases)
 
 
 ## Plans
@@ -36,6 +36,10 @@ Reach out on discord with bugs/feedback **nuxlar#0235**
 If you like what I'm doing contribute to my caffeine addiction! https://ko-fi.com/nuxlar
 
 ## Changelog
+**1.1.1**
+* Fixed umbra Mithrix doing 4% damage and having 10x HP (Didn't think it was THAT bad but DAMN)
+* Removed the clones from getting the umbra item
+
 **1.1.0**
 * IF YOURE UPDATING DELETE YOUR MITHRIXTHEACCURSED CONFIG FILE
 * Added Risk of Options support
