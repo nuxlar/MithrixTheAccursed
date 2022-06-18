@@ -1,27 +1,29 @@
 
 # Mithrix the Accursed
 
-The Accursed King of Nothing is faster, stronger, and has some tricks up his sleeve to make the battle more intense. Combined aspects of Artifact of the King and Inferno into the boss battle.
+The Accursed King of Nothing is faster, stronger, and has some tricks up his sleeve to make the battle more intense. Built off of Artifact of the King with some Inferno sprinkles.
+The Default flow:
 
-	- Phase 1 The Accursed King greets you and is resistant to debuffs (freeze/nullify)
-	- Phase 2 He returns to test out his creations
-	- Phase 3 The Accursed King's form becomes corrupted, releasing glass clones to aid him in battle
-	- Phase 4 He absorbs items quickly and releases a deadly slam attack
+	- Phase 1 The Accursed King drops in from the sky to greet you in battle (stats +5% per loop +1.25% per player)
+	- Phase 2 He returns to test out his creations (stats +10% per loop +2.5% per player)
+	- Phase 3 The Accursed King's form becomes corrupted, releasing clones to aid him in battle (stats +20% per loop +5% per player)
+	- Phase 4 He absorbs items quickly and releases a deadly slam attack (stats +5% per loop +1.25% per player)
 
-Most stuff is configurable:
+Most stuff is configurable (IF YOURE UPDATING FROM 1.0.0 DELETE YOUR MITHRIXTHEACCURSED CONFIG FILE):
 
 	- Stats
 	- Skills
 	- Full debuff immunity (scorpions still work)
-	- Debuff Resistance (freeze/nullify - tentabauble)
+	- Debuff Resistance (immune to freeze/tentabauble)
+	- Umbral Mithrix (Mithrix becomes a shadow of himself for all phases -DMG +HP)
 
 
 ## Plans
-* Make Mithrix scale per loop (more loops, more players, more insano style Mithrix)
 * Make the flow configurable (preset difficulties mayhaps, Lunar - AotK + Inferno with some accursed sprinkles, Accursed - My vision for the fight, Commando Must Die - For the masochistic risk player)
+* Make Mithrix more adaptive rather than flat scaling - based on debuffs, how fast his health drops, etc...
 
 ## Contact
-Reach out on discord with bugs/feedback **leon_#0235**
+Reach out on discord with bugs/feedback **nuxlar#0235**
 
 ## Credits
 **Icon**: Found this awesome illustration from MushyAvocado on ArtStation, fit the vibe perfectly. (https://www.artstation.com/artwork/PoWkG3)
@@ -34,6 +36,22 @@ Reach out on discord with bugs/feedback **leon_#0235**
 If you like what I'm doing contribute to my caffeine addiction! https://ko-fi.com/nuxlar
 
 ## Changelog
+**1.1.0**
+* IF YOURE UPDATING DELETE YOUR MITHRIXTHEACCURSED CONFIG FILE
+* Added Risk of Options support
+* Added Umbral Mithrix (configurable on/off)
+* Added flat loop scaling
+* Added vanilla values to config
+* Added scaling config
+* Added Phase 3 elite to config (disable/enable + elite type)
+* Tweaked default config values
+* Fixed flow not working when fighting Mithrix multiple times (Looper mod)
+* Added Phase 1 scaling (5% per loop, 1.25% per player)
+* Reduced Phase 2 scaling (10% per loop, 2.5% per player)
+* Reduced Phase 3 scaling (20% per loop, 5% per player)
+* Added Phase 4 scaling (5% per loop, 1.25% per player)
+* README edits
+
 **1.0.0**
 * v1 release!
 * Implemented a custom flow for the fight
