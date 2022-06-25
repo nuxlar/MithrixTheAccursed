@@ -14,6 +14,14 @@ namespace MithrixTheAccursed
         public static ConfigEntry<bool> debuffImmune;
         public static ConfigEntry<bool> debuffResistance;
 
+        public static ConfigEntry<float> phase1BaseHPScaling;
+        public static ConfigEntry<float> phase2BaseHPScaling;
+        public static ConfigEntry<float> phase3BaseHPScaling;
+        public static ConfigEntry<float> phase4BaseHPScaling;
+        public static ConfigEntry<float> phase1BaseMobilityScaling;
+        public static ConfigEntry<float> phase2BaseMobilityScaling;
+        public static ConfigEntry<float> phase3BaseMobilityScaling;
+
         public static ConfigEntry<float> phase1LoopHPScaling;
         public static ConfigEntry<float> phase2LoopHPScaling;
         public static ConfigEntry<float> phase3LoopHPScaling;
@@ -21,6 +29,7 @@ namespace MithrixTheAccursed
         public static ConfigEntry<float> phase1LoopMobilityScaling;
         public static ConfigEntry<float> phase2LoopMobilityScaling;
         public static ConfigEntry<float> phase3LoopMobilityScaling;
+
         public static ConfigEntry<float> phase1PlayerScaling;
         public static ConfigEntry<float> phase2PlayerScaling;
         public static ConfigEntry<float> phase3PlayerScaling;
@@ -74,17 +83,26 @@ namespace MithrixTheAccursed
             umbralMithrix = config.Bind("General", "Umbral Mithrix", false, "The King of Nothing becomes a shadow of himself (purely cosmetic, Drippy Mithrix)");
             umbralClone = config.Bind("General", "Umbral Clone", true, "A true shadow clone (mimics ALL of his abilities/stats) splits from The Accursed King of Nothing in phase 3");
 
-            phase1LoopHPScaling = config.Bind("Scaling", "P1 Loop HP", 0.1f, "HP boost percentage for Phase 1 PER LOOP (5 stages)");
-            phase2LoopHPScaling = config.Bind("Scaling", "P2 Loop HP", 0.2f, "HP boost percentage for Phase 2 PER LOOP");
-            phase3LoopHPScaling = config.Bind("Scaling", "P3 Loop HP", 0.3f, "HP boost percentage for Phase 3 PER LOOP");
-            phase4LoopHPScaling = config.Bind("Scaling", "P4 Loop HP", 0.4f, "HP boost percentage for Phase 4 PER LOOP");
-            phase1LoopMobilityScaling = config.Bind("Scaling", "P1 Loop Mobility", 0.05f, "Mobility (movementspd, acceleration, atkspd, turningspd) boost percentage for Phase 1 PER LOOP");
-            phase2LoopMobilityScaling = config.Bind("Scaling", "P2 Loop Mobility", 0.1f, "Mobility boost percentage for Phase 2 PER LOOP");
-            phase3LoopMobilityScaling = config.Bind("Scaling", "P3 Loop Mobility", 0.2f, "Mobility boost percentage for Phase 3 PER LOOP");
-            phase1PlayerScaling = config.Bind("Scaling", "Phase 1 Player", 0.0125f, "Stat (HP + Mobility) boost percentage for Phase 1 PER PLAYER");
-            phase2PlayerScaling = config.Bind("Scaling", "Phase 2 Player", 0.025f, "Stat (HP + Mobility) boost percentage for Phase 2 PER PLAYER");
-            phase3PlayerScaling = config.Bind("Scaling", "Phase 3 Player", 0.05f, "Stat (HP + Mobility) boost percentage for Phase 3 PER PLAYER");
-            phase4PlayerScaling = config.Bind("Scaling", "Phase 4 Player", 0.0125f, "Stat (HP + Mobility) boost percentage for Phase 4 PER PLAYER");
+            phase1BaseHPScaling = config.Bind("Scaling First Loop", "P1 HP", 0.05f, "HP boost percentage for Phase 1 FIRST LOOP (5 stages)");
+            phase2BaseHPScaling = config.Bind("Scaling First Loop", "P2 HP", 0.1f, "HP boost percentage for Phase 2 FIRST LOOP");
+            phase3BaseHPScaling = config.Bind("Scaling First Loop", "P3 HP", 0.15f, "HP boost percentage for Phase 3 FIRST LOOP");
+            phase4BaseHPScaling = config.Bind("Scaling First Loop", "P4 HP", 0.2f, "HP boost percentage for Phase 4 FIRST LOOP");
+            phase1BaseMobilityScaling = config.Bind("Scaling First Loop", "P1 Mobility", 0.025f, "Mobility boost percentage for Phase 1 FIRST LOOP");
+            phase2BaseMobilityScaling = config.Bind("Scaling First Loop", "P2 Mobility", 0.05f, "Mobility boost percentage for Phase 2 FIRST LOOP");
+            phase3BaseMobilityScaling = config.Bind("Scaling First Loop", "P3 Mobility", 0.075f, "Mobility boost percentage for Phase 3 FIRST LOOP");
+
+            phase1LoopHPScaling = config.Bind("Scaling Per Loop", "P1 Loop HP", 0.1f, "HP boost percentage for Phase 1 PER LOOP (every 5 stages)");
+            phase2LoopHPScaling = config.Bind("Scaling Per Loop", "P2 Loop HP", 0.2f, "HP boost percentage for Phase 2 PER LOOP");
+            phase3LoopHPScaling = config.Bind("Scaling Per Loop", "P3 Loop HP", 0.3f, "HP boost percentage for Phase 3 PER LOOP");
+            phase4LoopHPScaling = config.Bind("Scaling Per Loop", "P4 Loop HP", 0.4f, "HP boost percentage for Phase 4 PER LOOP");
+            phase1LoopMobilityScaling = config.Bind("Scaling Per Loop", "P1 Loop Mobility", 0.05f, "Mobility (movementspd, acceleration, atkspd, turningspd) boost percentage for Phase 1 PER LOOP");
+            phase2LoopMobilityScaling = config.Bind("Scaling Per Loop", "P2 Loop Mobility", 0.1f, "Mobility boost percentage for Phase 2 PER LOOP");
+            phase3LoopMobilityScaling = config.Bind("Scaling Per Loop", "P3 Loop Mobility", 0.15f, "Mobility boost percentage for Phase 3 PER LOOP");
+
+            phase1PlayerScaling = config.Bind("Player Scaling", "P1 Scaling", 0.0125f, "Stat (HP + Mobility) boost percentage for Phase 1 PER PLAYER");
+            phase2PlayerScaling = config.Bind("Player Scaling", "P2 Scaling", 0.025f, "Stat (HP + Mobility) boost percentage for Phase 2 PER PLAYER");
+            phase3PlayerScaling = config.Bind("Player Scaling", "P3 Scaling", 0.05f, "Stat (HP + Mobility) boost percentage for Phase 3 PER PLAYER");
+            phase4PlayerScaling = config.Bind("Player Scaling", "P4 Scaling", 0.075f, "Stat (HP + Mobility) boost percentage for Phase 4 PER PLAYER");
 
             basehealth = config.Bind("Stats", "Base Health", 1750f, "Vanilla: 1400");
             levelhealth = config.Bind("Stats", "Level Health", 250f, "Health gained per level. Vanilla: 420");
@@ -133,6 +151,13 @@ namespace MithrixTheAccursed
             ModSettingsManager.AddOption(new CheckBoxOption(debuffResistance));
             ModSettingsManager.AddOption(new IntSliderOption(phase3Elite, new IntSliderConfig() { min = 0, max = 7 }));
             // Scaling
+            ModSettingsManager.AddOption(new StepSliderOption(phase1BaseHPScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
+            ModSettingsManager.AddOption(new StepSliderOption(phase2BaseHPScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
+            ModSettingsManager.AddOption(new StepSliderOption(phase3BaseHPScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
+            ModSettingsManager.AddOption(new StepSliderOption(phase4BaseHPScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
+            ModSettingsManager.AddOption(new StepSliderOption(phase1BaseMobilityScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
+            ModSettingsManager.AddOption(new StepSliderOption(phase2BaseMobilityScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
+            ModSettingsManager.AddOption(new StepSliderOption(phase3BaseMobilityScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
             ModSettingsManager.AddOption(new StepSliderOption(phase1LoopHPScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
             ModSettingsManager.AddOption(new StepSliderOption(phase2LoopHPScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
             ModSettingsManager.AddOption(new StepSliderOption(phase3LoopHPScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
