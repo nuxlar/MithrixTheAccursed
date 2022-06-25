@@ -1,56 +1,57 @@
 # Mithrix the Accursed
 
-The Accursed King of Nothing is faster, stronger, and has some tricks up his sleeve to make the battle more intense. Built off of Artifact of the King with some Inferno sprinkles.
+The Accursed King of Nothing is faster, stronger, and has some tricks up his sleeve to make the battle more intense. This mod is completely configurable. The game defines a loop as ~5 stages so when I say 1 loop that means going to the moon "without looping".
 The Default flow:
 
-    - Phase 1 The Accursed King drops in from the sky to greet you in battle (stats +5% per loop +1.25% per player)
-    - Phase 2 He returns to test out his creations (stats +10% per loop +2.5% per player)
-    - Phase 3 The Accursed King's form becomes corrupted, releasing clones to aid him in battle (stats +20% per loop +5% per player)
-    - Phase 4 He absorbs items quickly and releases a deadly slam attack (stats +5% per loop +1.25% per player)
+- Phase 1 You face off against Mithrix but he's faster, stronger, and with harder hitting abilities.
+- Phase 2 Mithrix returns but brings along his creations with him.
+- Phase 3 Mithrix's form becomes corrupted, his attacks become stronger, and a true shadow clone splits from him after his jump special.
+- Phase 4 Your items are quickly stolen then Mithrix stays at the center of the arena while sending out deadly orbs along with his now weakened clone.
 
-Most stuff is configurable (IF YOURE UPDATING FROM 1.0.0 DELETE YOUR MITHRIXTHEACCURSED CONFIG FILE):
+Most stuff is configurable (IF YOURE UPDATING DELETE YOUR MITHRIXTHEACCURSED CONFIG FILE):
 
-    - Stats
-    - Skills
-    - Full debuff immunity (scorpions still work)
-    - Debuff Resistance (immune to freeze/tentabauble)
-    - Umbral Mithrix (Mithrix becomes a shadow of himself for all phases)
+- HP scaling per loop/player
+- Mobility scaling per loop/player
+- Skills (stocks/cooldowns)
+- Umbral Mithrix (Mithrix becomes an Umbra for all phases - cosmetic)
+- Umbral Clone (The glass clones are replaced with a singular perfect shadow of Mithrix - copies his abilities, yes ALL of them)
+- Debuff Immunity (scorpions still work) (applies after 3 loops even with the config off)
+- Debuff Resistance (immune to freeze/tentabauble) (applies after 2 loops even with the config off)
 
 ## Plans
 
-- Nothing atm, I feel like based on the feedback the mod is in a good place rn, so not gonna update it till something breaks or I have new ideas for working on/improving the fight.
+- Nothing atm, I listened to a lot of feedback and made the mod EXTRA CONFIGURABLE so everyone can tune it the way they want. So not gonna update it till something breaks, I have new ideas for altering/improving the fight, or some new feedback comes up.
 
 ## Contact
 
 Reach out on discord with bugs/feedback **nuxlar#0235**
 
+## Donate
+
+If you like what I'm doing contribute to my caffeine addiction!
+[<img src="https://uploads-ssl.webflow.com/5c14e387dab576fe667689cf/61e11d430afb112ea33c3aa5_Button-1.png">](https://ko-fi.com/nuxlar)
+
 ## Credits
 
-**Icon**: Found this awesome illustration from MushyAvocado on ArtStation, fit the vibe perfectly. (https://www.artstation.com/artwork/PoWkG3)
+**Icon**: Found this awesome illustration from MushyAvocado on ArtStation (https://www.artstation.com/artwork/PoWkG3)
 
 **Artifact of the King**: Base code is refactored from Blobface (https://thunderstore.io/package/Blobface/Artifact_of_the_King/)
 
 **Inferno**: Added some behaviors from HIFU's Mithrix fight (https://thunderstore.io/package/HIFU/Inferno/)
 
-## Donate
-
-If you like what I'm doing contribute to my caffeine addiction! https://ko-fi.com/nuxlar
-
 ## Changelog
 
 **1.2.0**
 
-- IF YOURE UPDATING DELETE YOURE CONFIG TO PREVENT (this is the price of configurability)
+- IF YOURE UPDATING DELETE YOURE CONFIG TO PREVENT (this is the price of configurability and satisfying almost everyone)
 - Debuff resistance applies after 2 loops DONE
 - Debuff immunity applies after 3 loops DONE
 - Debuff resistance/immunity can be configured to start from loop 1 but can't be disabled DONE
-- First loop scaling is now separate from other loop scaling and not configurable DONE
+- First loop scaling is now separate from other loop scaling DONE
 - Removed damage, armor, and shards from stat scaling DONE
 - Split scaling into HP and Mobility (movespd, acceleration, atkspd, turnspd) DONE
-- Loop 1 HP increases by 10% per phase DONE
-- Loop 1 Mobility increases by 5% per phase DONE
 - Removed Mobility scaling from Phase 4 DONE
-- Edited Risk Of Options values so they aren't insane values noone will use DONE
+- Edited Risk Of Options values so the sliders arent nuts DONE
 - Added random elite option DONE
 - Phase 4 is unskippable DONE
 - Added Umbral Clone (full Mithrix clone, he bakes pizzas and jumps)
