@@ -10,13 +10,17 @@ namespace MithrixTheAccursed
         public static ConfigEntry<bool> accurse;
         public static ConfigEntry<int> phase3Elite;
         public static ConfigEntry<bool> umbralMithrix;
+        public static ConfigEntry<bool> umbralClone;
         public static ConfigEntry<bool> debuffImmune;
         public static ConfigEntry<bool> debuffResistance;
 
-        public static ConfigEntry<float> phase1LoopScaling;
-        public static ConfigEntry<float> phase2LoopScaling;
-        public static ConfigEntry<float> phase3LoopScaling;
-        public static ConfigEntry<float> phase4LoopScaling;
+        public static ConfigEntry<float> phase1LoopHPScaling;
+        public static ConfigEntry<float> phase2LoopHPScaling;
+        public static ConfigEntry<float> phase3LoopHPScaling;
+        public static ConfigEntry<float> phase4LoopHPScaling;
+        public static ConfigEntry<float> phase1LoopMobilityScaling;
+        public static ConfigEntry<float> phase2LoopMobilityScaling;
+        public static ConfigEntry<float> phase3LoopMobilityScaling;
         public static ConfigEntry<float> phase1PlayerScaling;
         public static ConfigEntry<float> phase2PlayerScaling;
         public static ConfigEntry<float> phase3PlayerScaling;
@@ -64,19 +68,23 @@ namespace MithrixTheAccursed
         public static void InitConfig(ConfigFile config)
         {
             accurse = config.Bind("General", "Accurse", true, "Accurse the King of Nothing");
-            debuffImmune = config.Bind("General", "Debuff Immune", false, "The curse renders the King immune to debuffs");
-            debuffResistance = config.Bind("General", "Freeze/Nullify Immune", false, "Toggle the debuff resistance");
-            phase3Elite = config.Bind("General", "Phase 3 Elite", 1, "Set Mithrix's Phase 3 elite (0: Off, 1: Malachite, 2: Perfected, 3: Voidtouched, 4: Blazing, 5: Overloading, 6: Glacial, 7: Celestine)");
-            umbralMithrix = config.Bind("General", "Umbral Mithrix", false, "The King of Nothing becomes a shadow of himself");
+            debuffResistance = config.Bind("General", "Freeze/Nullify Immune", false, "Toggle the debuff resistance for loop 1, will not turn off for loops 2 and up");
+            debuffImmune = config.Bind("General", "Debuff Immune", false, "Toggle debuff immunity for loops 1 & 2, will not turn off for loops 3 and up");
+            phase3Elite = config.Bind("General", "Phase 3 Elite", 1, "Set Mithrix's Phase 3 elite (0: Off, 1: Malachite, 2: Perfected, 3: Voidtouched, 4: Blazing, 5: Overloading, 6: Glacial, 7: Random)");
+            umbralMithrix = config.Bind("General", "Umbral Mithrix", false, "The King of Nothing becomes a shadow of himself (purely cosmetic, Drippy Mithrix)");
+            umbralClone = config.Bind("General", "Umbral Clone", true, "A true shadow clone (mimics ALL of his abilities/stats) splits from The Accursed King of Nothing in phase 3");
 
-            phase1LoopScaling = config.Bind("Scaling", "Phase 1 Loop", 0.05f, "Stat boost percentage for Phase 1 PER LOOP");
-            phase2LoopScaling = config.Bind("Scaling", "Phase 2 Loop", 0.1f, "Stat boost percentage for Phase 2 PER LOOP");
-            phase3LoopScaling = config.Bind("Scaling", "Phase 3 Loop", 0.2f, "Stat boost percentage for Phase 3 PER LOOP");
-            phase4LoopScaling = config.Bind("Scaling", "Phase 4 Loop", 0.05f, "Stat boost percentage for Phase 4 PER LOOP");
-            phase1PlayerScaling = config.Bind("Scaling", "Phase 1 Player", 0.0125f, "Stat boost percentage for Phase 1 PER PLAYER");
-            phase2PlayerScaling = config.Bind("Scaling", "Phase 2 Player", 0.025f, "Stat boost percentage for Phase 2 PER PLAYER");
-            phase3PlayerScaling = config.Bind("Scaling", "Phase 3 Player", 0.05f, "Stat boost percentage for Phase 3 PER PLAYER");
-            phase4PlayerScaling = config.Bind("Scaling", "Phase 4 Player", 0.0125f, "Stat boost percentage for Phase 4 PER PLAYER");
+            phase1LoopHPScaling = config.Bind("Scaling", "P1 Loop HP", 0.1f, "HP boost percentage for Phase 1 PER LOOP (5 stages)");
+            phase2LoopHPScaling = config.Bind("Scaling", "P2 Loop HP", 0.2f, "HP boost percentage for Phase 2 PER LOOP");
+            phase3LoopHPScaling = config.Bind("Scaling", "P3 Loop HP", 0.3f, "HP boost percentage for Phase 3 PER LOOP");
+            phase4LoopHPScaling = config.Bind("Scaling", "P4 Loop HP", 0.4f, "HP boost percentage for Phase 4 PER LOOP");
+            phase1LoopMobilityScaling = config.Bind("Scaling", "P1 Loop Mobility", 0.05f, "Mobility (movementspd, acceleration, atkspd, turningspd) boost percentage for Phase 1 PER LOOP");
+            phase2LoopMobilityScaling = config.Bind("Scaling", "P2 Loop Mobility", 0.1f, "Mobility boost percentage for Phase 2 PER LOOP");
+            phase3LoopMobilityScaling = config.Bind("Scaling", "P3 Loop Mobility", 0.2f, "Mobility boost percentage for Phase 3 PER LOOP");
+            phase1PlayerScaling = config.Bind("Scaling", "Phase 1 Player", 0.0125f, "Stat (HP + Mobility) boost percentage for Phase 1 PER PLAYER");
+            phase2PlayerScaling = config.Bind("Scaling", "Phase 2 Player", 0.025f, "Stat (HP + Mobility) boost percentage for Phase 2 PER PLAYER");
+            phase3PlayerScaling = config.Bind("Scaling", "Phase 3 Player", 0.05f, "Stat (HP + Mobility) boost percentage for Phase 3 PER PLAYER");
+            phase4PlayerScaling = config.Bind("Scaling", "Phase 4 Player", 0.0125f, "Stat (HP + Mobility) boost percentage for Phase 4 PER PLAYER");
 
             basehealth = config.Bind("Stats", "Base Health", 1750f, "Vanilla: 1400");
             levelhealth = config.Bind("Stats", "Level Health", 250f, "Health gained per level. Vanilla: 420");
@@ -119,56 +127,60 @@ namespace MithrixTheAccursed
             // Risk Of Options Setup
             // General
             ModSettingsManager.AddOption(new CheckBoxOption(accurse));
+            ModSettingsManager.AddOption(new CheckBoxOption(umbralMithrix));
+            ModSettingsManager.AddOption(new CheckBoxOption(umbralClone));
             ModSettingsManager.AddOption(new CheckBoxOption(debuffImmune));
             ModSettingsManager.AddOption(new CheckBoxOption(debuffResistance));
-            ModSettingsManager.AddOption(new CheckBoxOption(umbralMithrix));
             ModSettingsManager.AddOption(new IntSliderOption(phase3Elite, new IntSliderConfig() { min = 0, max = 7 }));
             // Scaling
-            ModSettingsManager.AddOption(new StepSliderOption(phase1LoopScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
-            ModSettingsManager.AddOption(new StepSliderOption(phase2LoopScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
-            ModSettingsManager.AddOption(new StepSliderOption(phase3LoopScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
-            ModSettingsManager.AddOption(new StepSliderOption(phase4LoopScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
+            ModSettingsManager.AddOption(new StepSliderOption(phase1LoopHPScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
+            ModSettingsManager.AddOption(new StepSliderOption(phase2LoopHPScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
+            ModSettingsManager.AddOption(new StepSliderOption(phase3LoopHPScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
+            ModSettingsManager.AddOption(new StepSliderOption(phase4LoopHPScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
+            ModSettingsManager.AddOption(new StepSliderOption(phase1LoopMobilityScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.05f }));
+            ModSettingsManager.AddOption(new StepSliderOption(phase2LoopMobilityScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.05f }));
+            ModSettingsManager.AddOption(new StepSliderOption(phase3LoopMobilityScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.05f }));
             ModSettingsManager.AddOption(new StepSliderOption(phase1PlayerScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.0125f }));
             ModSettingsManager.AddOption(new StepSliderOption(phase2PlayerScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.0125f }));
             ModSettingsManager.AddOption(new StepSliderOption(phase3PlayerScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.0125f }));
             ModSettingsManager.AddOption(new StepSliderOption(phase4PlayerScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.0125f }));
             // Stats
-            ModSettingsManager.AddOption(new StepSliderOption(basehealth, new StepSliderConfig() { min = 1400, max = 10000, increment = 50f }));
-            ModSettingsManager.AddOption(new StepSliderOption(levelhealth, new StepSliderConfig() { min = 100, max = 1000, increment = 25f }));
-            ModSettingsManager.AddOption(new StepSliderOption(basedamage, new StepSliderConfig() { min = 10, max = 100, increment = 1f }));
-            ModSettingsManager.AddOption(new StepSliderOption(leveldamage, new StepSliderConfig() { min = 1, max = 10, increment = 0.25f }));
-            ModSettingsManager.AddOption(new StepSliderOption(basearmor, new StepSliderConfig() { min = 5, max = 100, increment = 5f }));
-            ModSettingsManager.AddOption(new StepSliderOption(baseattackspeed, new StepSliderConfig() { min = 0.25f, max = 10, increment = 0.25f }));
+            ModSettingsManager.AddOption(new StepSliderOption(basehealth, new StepSliderConfig() { min = 1400, max = 5000, increment = 50f }));
+            ModSettingsManager.AddOption(new StepSliderOption(levelhealth, new StepSliderConfig() { min = 100, max = 500, increment = 25f }));
+            ModSettingsManager.AddOption(new StepSliderOption(basedamage, new StepSliderConfig() { min = 10, max = 30, increment = 1f }));
+            ModSettingsManager.AddOption(new StepSliderOption(leveldamage, new StepSliderConfig() { min = 1, max = 6.4f, increment = 0.25f }));
+            ModSettingsManager.AddOption(new StepSliderOption(basearmor, new StepSliderConfig() { min = 5, max = 50, increment = 5f }));
+            ModSettingsManager.AddOption(new StepSliderOption(baseattackspeed, new StepSliderConfig() { min = 0.25f, max = 3, increment = 0.25f }));
             // Movement
-            ModSettingsManager.AddOption(new StepSliderOption(basespeed, new StepSliderConfig() { min = 10, max = 50, increment = 1f }));
+            ModSettingsManager.AddOption(new StepSliderOption(basespeed, new StepSliderConfig() { min = 10, max = 30, increment = 1f }));
             ModSettingsManager.AddOption(new StepSliderOption(mass, new StepSliderConfig() { min = 900, max = 10000, increment = 100f }));
-            ModSettingsManager.AddOption(new StepSliderOption(turningspeed, new StepSliderConfig() { min = 100, max = 1000, increment = 10f }));
+            ModSettingsManager.AddOption(new StepSliderOption(turningspeed, new StepSliderConfig() { min = 200, max = 1000, increment = 10f }));
             ModSettingsManager.AddOption(new StepSliderOption(jumpingpower, new StepSliderConfig() { min = 25, max = 100, increment = 5f }));
             ModSettingsManager.AddOption(new StepSliderOption(acceleration, new StepSliderConfig() { min = 45, max = 500, increment = 5f }));
-            ModSettingsManager.AddOption(new IntSliderOption(jumpcount, new IntSliderConfig() { min = 1, max = 10}));
-            ModSettingsManager.AddOption(new StepSliderOption(aircontrol, new StepSliderConfig() { min = 0.25f, max = 5, increment = 0.25f }));
+            ModSettingsManager.AddOption(new IntSliderOption(jumpcount, new IntSliderConfig() { min = 1, max = 5}));
+            ModSettingsManager.AddOption(new StepSliderOption(aircontrol, new StepSliderConfig() { min = 0.25f, max = 3, increment = 0.25f }));
             // Skills
-            ModSettingsManager.AddOption(new IntSliderOption(PrimStocks, new IntSliderConfig() { min = 1, max = 10 }));
-            ModSettingsManager.AddOption(new IntSliderOption(SecStocks, new IntSliderConfig() { min = 1, max = 10 }));
-            ModSettingsManager.AddOption(new IntSliderOption(UtilStocks, new IntSliderConfig() { min = 1, max = 10 }));
-            ModSettingsManager.AddOption(new StepSliderOption(PrimCD, new StepSliderConfig() { min = 1, max = 10, increment = 0.25f }));
-            ModSettingsManager.AddOption(new StepSliderOption(SecCD, new StepSliderConfig() { min = 1, max = 10, increment = 0.25f }));
-            ModSettingsManager.AddOption(new StepSliderOption(UtilCD, new StepSliderConfig() { min = 1, max = 10, increment = 0.25f }));
+            ModSettingsManager.AddOption(new IntSliderOption(PrimStocks, new IntSliderConfig() { min = 1, max = 5 }));
+            ModSettingsManager.AddOption(new IntSliderOption(SecStocks, new IntSliderConfig() { min = 1, max = 5 }));
+            ModSettingsManager.AddOption(new IntSliderOption(UtilStocks, new IntSliderConfig() { min = 1, max = 5 }));
+            ModSettingsManager.AddOption(new StepSliderOption(PrimCD, new StepSliderConfig() { min = 1, max = 5, increment = 0.25f }));
+            ModSettingsManager.AddOption(new StepSliderOption(SecCD, new StepSliderConfig() { min = 1, max = 5, increment = 0.25f }));
+            ModSettingsManager.AddOption(new StepSliderOption(UtilCD, new StepSliderConfig() { min = 1, max = 5, increment = 0.25f }));
             ModSettingsManager.AddOption(new StepSliderOption(SpecialCD, new StepSliderConfig() { min = 10, max = 50, increment = 1f }));
             // Skill Mods
             ModSettingsManager.AddOption(new IntSliderOption(SlamWaveProjectileCount, new IntSliderConfig() { min = 0, max = 24 }));
-            ModSettingsManager.AddOption(new IntSliderOption(SecondaryFan, new IntSliderConfig() { min = 1, max = 10 }));
-            ModSettingsManager.AddOption(new IntSliderOption(UtilityShotgun, new IntSliderConfig() { min = 1, max = 10 }));
-            ModSettingsManager.AddOption(new IntSliderOption(LunarShardAdd, new IntSliderConfig() { min = 1, max = 20 }));
-            ModSettingsManager.AddOption(new IntSliderOption(UltimateWaves, new IntSliderConfig() { min = 1, max = 20 }));
-            ModSettingsManager.AddOption(new StepSliderOption(UltimateDuration, new StepSliderConfig() { min = 1, max = 10, increment = 0.25f }));
-            ModSettingsManager.AddOption(new IntSliderOption(cloneduration, new IntSliderConfig() { min = 10, max = 60 }));
+            ModSettingsManager.AddOption(new IntSliderOption(SecondaryFan, new IntSliderConfig() { min = 1, max = 5 }));
+            ModSettingsManager.AddOption(new IntSliderOption(UtilityShotgun, new IntSliderConfig() { min = 1, max = 5 }));
+            ModSettingsManager.AddOption(new IntSliderOption(LunarShardAdd, new IntSliderConfig() { min = 1, max = 5 }));
+            ModSettingsManager.AddOption(new IntSliderOption(UltimateWaves, new IntSliderConfig() { min = 9, max = 18 }));
+            ModSettingsManager.AddOption(new StepSliderOption(UltimateDuration, new StepSliderConfig() { min = 5, max = 10, increment = 0.25f }));
+            ModSettingsManager.AddOption(new IntSliderOption(cloneduration, new IntSliderConfig() { min = 15, max = 40 }));
             ModSettingsManager.AddOption(new StepSliderOption(JumpRecast, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
-            ModSettingsManager.AddOption(new StepSliderOption(JumpPause, new StepSliderConfig() { min = 0.1f, max = 3, increment = 0.1f }));
-            ModSettingsManager.AddOption(new IntSliderOption(JumpWaveCount, new IntSliderConfig() { min = 1, max = 24 }));
-            ModSettingsManager.AddOption(new StepSliderOption(ShardHoming, new StepSliderConfig() { min = 10f, max = 100, increment = 5f }));
-            ModSettingsManager.AddOption(new StepSliderOption(ShardRange, new StepSliderConfig() { min = 50, max = 200, increment = 10f }));
-            ModSettingsManager.AddOption(new StepSliderOption(ShardCone, new StepSliderConfig() { min = 80f, max = 180, increment = 10f }));
+            ModSettingsManager.AddOption(new StepSliderOption(JumpPause, new StepSliderConfig() { min = 0.2f, max = 3, increment = 0.1f }));
+            ModSettingsManager.AddOption(new IntSliderOption(JumpWaveCount, new IntSliderConfig() { min = 12, max = 24 }));
+            ModSettingsManager.AddOption(new StepSliderOption(ShardHoming, new StepSliderConfig() { min = 10f, max = 60, increment = 5f }));
+            ModSettingsManager.AddOption(new StepSliderOption(ShardRange, new StepSliderConfig() { min = 80, max = 160, increment = 10f }));
+            ModSettingsManager.AddOption(new StepSliderOption(ShardCone, new StepSliderConfig() { min = 90f, max = 180, increment = 10f }));
 
             ModSettingsManager.SetModDescription("Fight the Accursed King of Nothing in an even more intense boss battle.");
         }

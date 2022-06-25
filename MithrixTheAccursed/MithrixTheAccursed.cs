@@ -6,6 +6,7 @@ using EntityStates.BrotherMonster.Weapon;
 using UnityEngine;
 using RoR2.Skills;
 using System;
+using System.Collections.Generic;
 using UnityEngine.Networking;
 using UnityEngine.AddressableAssets;
 
@@ -30,16 +31,10 @@ namespace MithrixTheAccursed
                 On.EntityStates.Missions.BrotherEncounter.Phase2.OnEnter += Phase2OnEnter;
                 On.EntityStates.Missions.BrotherEncounter.Phase3.OnEnter += Phase3OnEnter;
                 On.EntityStates.Missions.BrotherEncounter.Phase4.OnEnter += Phase4OnEnter;
-                if (ModConfig.debuffImmune.Value)
-                    On.RoR2.Items.ImmuneToDebuffBehavior.TryApplyOverride += TryApplyOverride;
-                CharacterMaster.onStartGlobal += new Action<CharacterMaster>(MasterChanges);
-                On.EntityStates.BrotherMonster.EnterSkyLeap.OnEnter += EnterSkyLeapOnEnter;
+                On.RoR2.Items.ImmuneToDebuffBehavior.TryApplyOverride += TryApplyOverride;
                 On.EntityStates.BrotherMonster.ExitSkyLeap.OnEnter += ExitSkyLeapOnEnter;
-                if (ModConfig.debuffResistance.Value)
-                {
-                    On.EntityStates.FrozenState.OnEnter += FrozenStateOnEnter;
-                    On.RoR2.CharacterBody.AddTimedBuff_BuffDef_float += AddTimedBuff_BuffDef_float;
-                }
+                On.EntityStates.FrozenState.OnEnter += FrozenStateOnEnter;
+                On.RoR2.CharacterBody.AddTimedBuff_BuffDef_float += AddTimedBuff_BuffDef_float;
                 On.EntityStates.BrotherMonster.SlideIntroState.OnEnter += SlideIntroStateOnEnter;
                 On.EntityStates.BrotherMonster.SprintBash.OnEnter += SprintBashOnEnter;
                 On.EntityStates.BrotherMonster.WeaponSlam.OnEnter += WeaponSlamOnEnter;
@@ -59,10 +54,21 @@ namespace MithrixTheAccursed
 
         private void AdjustBaseStats()
         {
-            // increases most stats by 5% per loop and 1.25% per player
+            // first loop increases HP by 10% and Mobility by 5% and adds 1.25% per player to both
             Logger.LogMessage("Adjusting Phase 1 Stats");
             int playerCount = PlayerCharacterMasterController.instances.Count;
-            float multiplier = (ModConfig.phase1LoopScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase1PlayerScaling.Value * playerCount);
+            float hpMultiplier;
+            float mobilityMultiplier;
+            if (Run.instance.loopClearCount == 1)
+            {
+                hpMultiplier = (0.1f * Run.instance.loopClearCount) + (0.0125f * playerCount);
+                mobilityMultiplier = (0.05f * Run.instance.loopClearCount) + (0.0125f * playerCount);
+            }
+            else
+            {
+                hpMultiplier = (ModConfig.phase1LoopHPScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase1PlayerScaling.Value * playerCount);
+                mobilityMultiplier = (ModConfig.phase1LoopMobilityScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase1PlayerScaling.Value * playerCount);
+            }
             CharacterBody MithrixBody = Mithrix.GetComponent<CharacterBody>();
             CharacterDirection MithrixDirection = Mithrix.GetComponent<CharacterDirection>();
             CharacterMotor MithrixMotor = Mithrix.GetComponent<CharacterMotor>();
@@ -73,37 +79,36 @@ namespace MithrixTheAccursed
 
             if (ModConfig.umbralMithrix.Value)
             {
-                MithrixBody.baseMaxHealth = (ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier)) / 10;
-                MithrixBody.levelMaxHealth = (ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier)) / 10;
-                MithrixBody.baseDamage = (ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier)) * 100 / 4;
-                MithrixBody.levelDamage = (ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier)) * 100 / 4;
+                MithrixBody.baseMaxHealth = (ModConfig.basehealth.Value + (ModConfig.basehealth.Value * hpMultiplier)) / 10;
+                MithrixBody.levelMaxHealth = (ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * hpMultiplier)) / 10;
+                MithrixBody.baseDamage = ModConfig.basedamage.Value * 100 / 4;
+                MithrixBody.levelDamage = ModConfig.leveldamage.Value * 100 / 4;
 
             } else
             {
-                MithrixBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier);
-                MithrixBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier);
-                MithrixBody.baseDamage = ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier);
-                MithrixBody.levelDamage = ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier);
+                MithrixBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * hpMultiplier);
+                MithrixBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * hpMultiplier);
+                MithrixBody.baseDamage = ModConfig.basedamage.Value;
+                MithrixBody.levelDamage = ModConfig.leveldamage.Value;
             }
 
-            MithrixBody.baseAttackSpeed = ModConfig.baseattackspeed.Value + (ModConfig.baseattackspeed.Value * multiplier);
+            MithrixBody.baseAttackSpeed = ModConfig.baseattackspeed.Value + (ModConfig.baseattackspeed.Value * mobilityMultiplier);
+            MithrixBody.baseMoveSpeed = ModConfig.basespeed.Value + (ModConfig.basespeed.Value * mobilityMultiplier);
+            MithrixBody.baseAcceleration = ModConfig.acceleration.Value + (ModConfig.acceleration.Value * mobilityMultiplier);
+            MithrixBody.baseJumpPower = ModConfig.jumpingpower.Value + (ModConfig.jumpingpower.Value * mobilityMultiplier);
+            MithrixDirection.turnSpeed = ModConfig.turningspeed.Value + (ModConfig.turningspeed.Value * mobilityMultiplier);
 
-            MithrixBody.baseMoveSpeed = ModConfig.basespeed.Value + (ModConfig.basespeed.Value * multiplier);
-            MithrixBody.baseAcceleration = ModConfig.acceleration.Value + (ModConfig.acceleration.Value * multiplier);
-            MithrixBody.baseJumpPower = ModConfig.jumpingpower.Value + (ModConfig.jumpingpower.Value * multiplier);
-            MithrixDirection.turnSpeed = ModConfig.turningspeed.Value + (ModConfig.turningspeed.Value * multiplier);
-
-            MithrixBody.baseArmor = ModConfig.basearmor.Value + (ModConfig.basearmor.Value * multiplier);
+            MithrixBody.baseArmor = ModConfig.basearmor.Value;
 
             ProjectileSteerTowardTarget component = FireLunarShards.projectilePrefab.GetComponent<ProjectileSteerTowardTarget>();
-            component.rotationSpeed = ModConfig.ShardHoming.Value + (ModConfig.ShardHoming.Value * multiplier);
+            component.rotationSpeed = ModConfig.ShardHoming.Value;
             ProjectileDirectionalTargetFinder component2 = FireLunarShards.projectilePrefab.GetComponent<ProjectileDirectionalTargetFinder>();
-            component2.lookRange = ModConfig.ShardRange.Value + (ModConfig.ShardRange.Value * multiplier);
-            component2.lookCone = ModConfig.ShardCone.Value + (ModConfig.ShardCone.Value * multiplier);
+            component2.lookRange = ModConfig.ShardRange.Value;
+            component2.lookCone = ModConfig.ShardCone.Value;
             component2.allowTargetLoss = true;
 
             WeaponSlam.duration = (3.5f / ModConfig.baseattackspeed.Value);
-            HoldSkyLeap.duration = ModConfig.JumpPause.Value - (ModConfig.JumpPause.Value * multiplier);
+            HoldSkyLeap.duration = ModConfig.JumpPause.Value;
             ExitSkyLeap.waveProjectileCount = ModConfig.JumpWaveCount.Value;
             ExitSkyLeap.cloneDuration = ModConfig.cloneduration.Value;
             ExitSkyLeap.recastChance = ModConfig.JumpRecast.Value;
@@ -138,88 +143,88 @@ namespace MithrixTheAccursed
 
         private void AdjustPhase2Stats()
         {
-            // increases most stats by 10% per loop and 2.5% per player
+            // first loop increases HP by 20% and Mobility by 10% and adds 2.5% per player to both
             Logger.LogMessage("Adjusting Phase 2 Stats");
             int playerCount = PlayerCharacterMasterController.instances.Count;
-            float multiplier = (ModConfig.phase2LoopScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase2PlayerScaling.Value * playerCount);
+            float hpMultiplier;
+            float mobilityMultiplier;
+            if (Run.instance.loopClearCount == 1)
+            {
+                hpMultiplier = (0.2f * Run.instance.loopClearCount) + (0.025f * playerCount);
+                mobilityMultiplier = (0.1f * Run.instance.loopClearCount) + (0.025f * playerCount);
+            }
+            else
+            {
+                hpMultiplier = (ModConfig.phase2LoopHPScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase2PlayerScaling.Value * playerCount);
+                mobilityMultiplier = (ModConfig.phase2LoopMobilityScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase2PlayerScaling.Value * playerCount);
+            }
             CharacterBody MithrixBody = Mithrix.GetComponent<CharacterBody>();
             CharacterDirection MithrixDirection = Mithrix.GetComponent<CharacterDirection>();
 
             if (ModConfig.umbralMithrix.Value)
             {
-                MithrixBody.baseMaxHealth = (ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier)) / 10;
-                MithrixBody.levelMaxHealth = (ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier)) / 10;
-                MithrixBody.baseDamage = (ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier)) * 100 / 4;
-                MithrixBody.levelDamage = (ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier)) * 100 / 4;
+                MithrixBody.baseMaxHealth = (ModConfig.basehealth.Value + (ModConfig.basehealth.Value * hpMultiplier)) / 10;
+                MithrixBody.levelMaxHealth = (ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * hpMultiplier)) / 10;
+                MithrixBody.baseDamage = ModConfig.basedamage.Value * 100 / 4;
+                MithrixBody.levelDamage = ModConfig.leveldamage.Value * 100 / 4;
 
             }
             else
             {
-                MithrixBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier);
-                MithrixBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier);
-                MithrixBody.baseDamage = ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier);
-                MithrixBody.levelDamage = ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier);
+                MithrixBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * hpMultiplier);
+                MithrixBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * hpMultiplier);
             }
 
-            MithrixBody.baseAttackSpeed = ModConfig.baseattackspeed.Value + (ModConfig.baseattackspeed.Value * multiplier);
+            MithrixBody.baseAttackSpeed = ModConfig.baseattackspeed.Value + (ModConfig.baseattackspeed.Value * mobilityMultiplier);
+            MithrixBody.baseMoveSpeed = ModConfig.basespeed.Value + (ModConfig.basespeed.Value * mobilityMultiplier);
+            MithrixBody.baseAcceleration = ModConfig.acceleration.Value + (ModConfig.acceleration.Value * mobilityMultiplier);
+            MithrixBody.baseJumpPower = ModConfig.jumpingpower.Value + (ModConfig.jumpingpower.Value * mobilityMultiplier);
+            MithrixDirection.turnSpeed = ModConfig.turningspeed.Value + (ModConfig.turningspeed.Value * mobilityMultiplier);
 
-            MithrixBody.baseMoveSpeed = ModConfig.basespeed.Value + (ModConfig.basespeed.Value * multiplier);
-            MithrixBody.baseAcceleration = ModConfig.acceleration.Value + (ModConfig.acceleration.Value * multiplier);
-            MithrixBody.baseJumpPower = ModConfig.jumpingpower.Value + (ModConfig.jumpingpower.Value * multiplier);
-            MithrixDirection.turnSpeed = ModConfig.turningspeed.Value + (ModConfig.turningspeed.Value * multiplier);
-
-            MithrixBody.baseArmor = ModConfig.basearmor.Value + (ModConfig.basearmor.Value * multiplier);
-
-            ProjectileSteerTowardTarget component = FireLunarShards.projectilePrefab.GetComponent<ProjectileSteerTowardTarget>();
-            component.rotationSpeed = ModConfig.ShardHoming.Value + (ModConfig.ShardHoming.Value * multiplier);
-            ProjectileDirectionalTargetFinder component2 = FireLunarShards.projectilePrefab.GetComponent<ProjectileDirectionalTargetFinder>();
-            component2.lookRange = ModConfig.ShardRange.Value + (ModConfig.ShardRange.Value * multiplier);
-            component2.lookCone = ModConfig.ShardCone.Value + (ModConfig.ShardCone.Value * multiplier);
-
-            WeaponSlam.duration = (3.5f / (ModConfig.baseattackspeed.Value + (ModConfig.baseattackspeed.Value * multiplier)));
+            WeaponSlam.duration = (3.5f / ModConfig.baseattackspeed.Value);
         }
 
         private void AdjustPhase3Stats()
         {
-            // increases most stats by 20% per loop and 5% per player
+            // first loop increases HP by 30% and Mobility by 15% and adds 3.75% per player to both
             Logger.LogMessage("Adjusting Phase 3 Stats");
             int playerCount = PlayerCharacterMasterController.instances.Count;
-            float multiplier = (ModConfig.phase3LoopScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase3PlayerScaling.Value * playerCount);
+            float hpMultiplier;
+            float mobilityMultiplier;
+            if (Run.instance.loopClearCount == 1)
+            {
+                hpMultiplier = (0.3f * Run.instance.loopClearCount) + (0.0375f * playerCount);
+                mobilityMultiplier = (0.15f * Run.instance.loopClearCount) + (0.0375f * playerCount);
+            }    
+            else
+            {
+                hpMultiplier = (ModConfig.phase3LoopHPScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase3PlayerScaling.Value * playerCount);
+                mobilityMultiplier = (ModConfig.phase3LoopMobilityScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase3PlayerScaling.Value * playerCount);
+            }
             CharacterBody MithrixBody = Mithrix.GetComponent<CharacterBody>();
             CharacterDirection MithrixDirection = Mithrix.GetComponent<CharacterDirection>();
 
             if (ModConfig.umbralMithrix.Value)
             {
-                MithrixBody.baseMaxHealth = (ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier)) / 10;
-                MithrixBody.levelMaxHealth = (ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier)) / 10;
-                MithrixBody.baseDamage = (ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier)) * 100 / 4;
-                MithrixBody.levelDamage = (ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier)) * 100 / 4;
+                MithrixBody.baseMaxHealth = (ModConfig.basehealth.Value + (ModConfig.basehealth.Value * hpMultiplier)) / 10;
+                MithrixBody.levelMaxHealth = (ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * hpMultiplier)) / 10;
+                MithrixBody.baseDamage = ModConfig.basedamage.Value * 100 / 4;
+                MithrixBody.levelDamage = ModConfig.leveldamage.Value * 100 / 4;
 
             }
             else
             {
-                MithrixBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier);
-                MithrixBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier);
-                MithrixBody.baseDamage = ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier);
-                MithrixBody.levelDamage = ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier);
+                MithrixBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * hpMultiplier);
+                MithrixBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * hpMultiplier);
             }
 
-            MithrixBody.baseAttackSpeed = ModConfig.baseattackspeed.Value + (ModConfig.baseattackspeed.Value * multiplier);
+            MithrixBody.baseAttackSpeed = ModConfig.baseattackspeed.Value + (ModConfig.baseattackspeed.Value * mobilityMultiplier);
+            MithrixBody.baseMoveSpeed = ModConfig.basespeed.Value + (ModConfig.basespeed.Value * mobilityMultiplier);
+            MithrixBody.baseAcceleration = ModConfig.acceleration.Value + (ModConfig.acceleration.Value * mobilityMultiplier);
+            MithrixBody.baseJumpPower = ModConfig.jumpingpower.Value + (ModConfig.jumpingpower.Value * mobilityMultiplier);
+            MithrixDirection.turnSpeed = ModConfig.turningspeed.Value + (ModConfig.turningspeed.Value * mobilityMultiplier);
 
-            MithrixBody.baseMoveSpeed = ModConfig.basespeed.Value + (ModConfig.basespeed.Value * multiplier);
-            MithrixBody.baseAcceleration = ModConfig.acceleration.Value + (ModConfig.acceleration.Value * multiplier);
-            MithrixBody.baseJumpPower = ModConfig.jumpingpower.Value + (ModConfig.jumpingpower.Value * multiplier);
-            MithrixDirection.turnSpeed = ModConfig.turningspeed.Value + (ModConfig.turningspeed.Value * multiplier);
-
-            MithrixBody.baseArmor = ModConfig.basearmor.Value + (ModConfig.basearmor.Value * multiplier);
-
-            ProjectileSteerTowardTarget component = FireLunarShards.projectilePrefab.GetComponent<ProjectileSteerTowardTarget>();
-            component.rotationSpeed = ModConfig.ShardHoming.Value + (ModConfig.ShardHoming.Value * multiplier);
-            ProjectileDirectionalTargetFinder component2 = FireLunarShards.projectilePrefab.GetComponent<ProjectileDirectionalTargetFinder>();
-            component2.lookRange = ModConfig.ShardRange.Value + (ModConfig.ShardRange.Value * multiplier);
-            component2.lookCone = ModConfig.ShardCone.Value + (ModConfig.ShardCone.Value * multiplier);
-
-            WeaponSlam.duration = (3.5f / (ModConfig.baseattackspeed.Value + (ModConfig.baseattackspeed.Value * multiplier)));
+            WeaponSlam.duration = (3.5f / ModConfig.baseattackspeed.Value);
             if (playerCount > 4)
                 ExitSkyLeap.cloneCount = 4;
             else
@@ -228,40 +233,30 @@ namespace MithrixTheAccursed
 
         private void AdjustPhase4Stats()
         {
-            // increases most stats by 5% per loop and 1.25% per player
+            // first loop increases HP by 40% adds 5% per player to both
             Logger.LogMessage("Adjusting Phase 4 Stats");
-            GameObject MithrixHurt = LegacyResourcesAPI.Load<GameObject>("Prefabs/Characterbodies/BrotherHurtBody");
             int playerCount = PlayerCharacterMasterController.instances.Count;
-            float multiplier = (ModConfig.phase4LoopScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase4PlayerScaling.Value * playerCount);
+            float hpMultiplier;
+            if (Run.instance.loopClearCount == 1)
+                hpMultiplier = (0.4f * Run.instance.loopClearCount) + (0.05f * playerCount);
+            else
+                hpMultiplier = (ModConfig.phase4LoopHPScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase4PlayerScaling.Value * playerCount);
+            GameObject MithrixHurt = LegacyResourcesAPI.Load<GameObject>("Prefabs/Characterbodies/BrotherHurtBody");
             CharacterBody MithrixHurtBody = MithrixHurt.GetComponent<CharacterBody>();
-            CharacterDirection MithrixHurtDirection = MithrixHurt.GetComponent<CharacterDirection>();
 
             if (ModConfig.umbralMithrix.Value)
             {
-                MithrixHurtBody.baseMaxHealth = (ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier)) / 10;
-                MithrixHurtBody.levelMaxHealth = (ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier)) / 10;
-                MithrixHurtBody.baseDamage = (ModConfig.basedamage.Value + (ModConfig.basedamage.Value * multiplier)) * 100 / 4;
-                MithrixHurtBody.levelDamage = (ModConfig.leveldamage.Value + (ModConfig.leveldamage.Value * multiplier)) * 100 / 4;
+                MithrixHurtBody.baseMaxHealth = (ModConfig.basehealth.Value + (ModConfig.basehealth.Value * hpMultiplier)) / 10;
+                MithrixHurtBody.levelMaxHealth = (ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * hpMultiplier)) / 10;
+                MithrixHurtBody.baseDamage = ModConfig.basedamage.Value * 100 / 4;
+                MithrixHurtBody.levelDamage = ModConfig.leveldamage.Value * 100 / 4;
 
             }
             else
             {
-                MithrixHurtBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * multiplier);
-                MithrixHurtBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * multiplier);
+                MithrixHurtBody.baseMaxHealth = ModConfig.basehealth.Value + (ModConfig.basehealth.Value * hpMultiplier);
+                MithrixHurtBody.levelMaxHealth = ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * hpMultiplier);
             }
-
-            MithrixHurtBody.baseMoveSpeed = ModConfig.basespeed.Value + (ModConfig.basespeed.Value * multiplier);
-            MithrixHurtBody.baseAcceleration = ModConfig.acceleration.Value + (ModConfig.acceleration.Value * multiplier);
-            MithrixHurtDirection.turnSpeed = ModConfig.turningspeed.Value + (ModConfig.turningspeed.Value * multiplier);
-
-            MithrixHurtBody.baseArmor = ModConfig.basearmor.Value + (ModConfig.basearmor.Value * multiplier);
-
-            ProjectileSteerTowardTarget component = FireLunarShards.projectilePrefab.GetComponent<ProjectileSteerTowardTarget>();
-            component.rotationSpeed = ModConfig.ShardHoming.Value + (ModConfig.ShardHoming.Value * multiplier);
-            ProjectileDirectionalTargetFinder component2 = FireLunarShards.projectilePrefab.GetComponent<ProjectileDirectionalTargetFinder>();
-            component2.lookRange = ModConfig.ShardRange.Value + (ModConfig.ShardRange.Value * multiplier);
-            component2.lookCone = ModConfig.ShardCone.Value + (ModConfig.ShardCone.Value * multiplier);
-            component2.allowTargetLoss = true;
         }
 
         private void OnRunStart(On.RoR2.Run.orig_Start orig, Run self)
@@ -274,15 +269,14 @@ namespace MithrixTheAccursed
 
         private void FrozenStateOnEnter(On.EntityStates.FrozenState.orig_OnEnter orig, EntityStates.FrozenState self)
         {
-            if (self.characterBody.name == "BrotherBody(Clone)")
+            if (self.characterBody.name == "BrotherBody(Clone)" && (Run.instance.loopClearCount >= 2 || ModConfig.debuffResistance.Value))
                 return;
             orig(self);
         }
 
-
         private void AddTimedBuff_BuffDef_float(On.RoR2.CharacterBody.orig_AddTimedBuff_BuffDef_float orig, CharacterBody self, BuffDef buffDef, float duration)
         {
-            if (self.name == "BrotherBody(Clone)" && buffDef == RoR2Content.Buffs.Nullified)
+            if (self.name == "BrotherBody(Clone)" && buffDef == RoR2Content.Buffs.Nullified && (Run.instance.loopClearCount >= 2 || ModConfig.debuffResistance.Value))
                 return;
             orig(self, buffDef, duration);
         }
@@ -294,11 +288,8 @@ namespace MithrixTheAccursed
             {
                 if (component.isProtected)
                     return true;
-                if (body.name == "BrotherBody(Clone)")
-                {
-                    if (ModConfig.debuffImmune.Value)
-                        return true;
-                }
+                if (body.name == "BrotherBody(Clone)" && (Run.instance.loopClearCount >= 3 || ModConfig.debuffImmune.Value))
+                    return true;
                 else
                 {
                     if (body.HasBuff(DLC1Content.Buffs.ImmuneToDebuffReady) && (bool)component.healthComponent)
@@ -316,21 +307,25 @@ namespace MithrixTheAccursed
             return false;
         }
 
-        public void MasterChanges(CharacterMaster master)
-        {
-            string name = master.name;
-            if (name == "BrotherMaster(Clone)")
-            {
-                if (ModConfig.debuffImmune.Value)
-                    master.inventory.GiveItem(DLC1Content.Items.ImmuneToDebuff);
-            }
-        }
-
         private void CharacterMasterOnBodyStart(On.RoR2.CharacterMaster.orig_OnBodyStart orig, CharacterMaster self, CharacterBody body)
         {
             orig(self, body);
+            if (self.name == "BrotherHurtBody(Clone)")
+                body.AddBuff(RoR2Content.Buffs.Immune);
+            if (self.name == "BrotherMaster(Clone)" && (Run.instance.loopClearCount >= 3 || ModConfig.debuffImmune.Value))
+                self.inventory.GiveItem(DLC1Content.Items.ImmuneToDebuff);
             if (self.name == "BrotherMaster(Clone)" && phaseCounter == 2 && ModConfig.phase3Elite.Value != 0)
             {
+                List<string> affixNames = new()
+                {
+                    RoR2Content.Equipment.AffixPoison.name,
+                    RoR2Content.Equipment.AffixLunar.name,
+                    RoR2Content.Equipment.AffixRed.name,
+                    RoR2Content.Equipment.AffixBlue.name,
+                    RoR2Content.Equipment.AffixWhite.name,
+                    DLC1Content.Equipment.EliteVoidEquipment.name
+                };
+                int idx = new System.Random().Next(affixNames.Count);
                 switch (ModConfig.phase3Elite.Value)
                 {
                     case 1:
@@ -358,8 +353,8 @@ namespace MithrixTheAccursed
                         self.inventory.GiveEquipmentString(RoR2Content.Equipment.AffixWhite.name);
                         break;
                     case 7:
-                        // Celestine
-                        self.inventory.GiveEquipmentString(RoR2Content.Equipment.AffixHaunted.name);
+                        // Random
+                        self.inventory.GiveEquipmentString(affixNames[idx]);
                         break;
                 }
             }
@@ -488,13 +483,6 @@ namespace MithrixTheAccursed
                         baseToken = $"<color=#e6f3fc>The Glacial King rises</color>"
                     });
                     break;
-                case 7:
-                    // Celestine
-                    Chat.SendBroadcastChat(new Chat.SimpleChatMessage()
-                    {
-                        baseToken = $"<color=#29a5be>The King's form becomes haunting</color>"
-                    });
-                    break;
             }
             orig(self);
         }
@@ -502,13 +490,6 @@ namespace MithrixTheAccursed
         private void Phase4OnEnter(On.EntityStates.Missions.BrotherEncounter.Phase4.orig_OnEnter orig, EntityStates.Missions.BrotherEncounter.Phase4 self)
         {
             AdjustPhase4Stats();
-            orig(self);
-        }
-
-        private void EnterSkyLeapOnEnter(On.EntityStates.BrotherMonster.EnterSkyLeap.orig_OnEnter orig, EnterSkyLeap self)
-        {
-            if (self.characterBody.name == "BrotherBodyIT(Clone)")
-                return;
             orig(self);
         }
 
@@ -540,23 +521,38 @@ namespace MithrixTheAccursed
                 return;
             if ((double)UnityEngine.Random.value < ExitSkyLeap.recastChance)
                 self.recast = true;
-            for (int index = 0; index < ExitSkyLeap.cloneCount; ++index)
+            if (self.characterBody.name != "BrotherITBody(Clone)")
             {
-                SpawnCard spawnCard = LegacyResourcesAPI.Load<SpawnCard>("SpawnCards/CharacterSpawnCards/cscBrotherGlass");
-                DirectorPlacementRule placementRule = new DirectorPlacementRule();
-                placementRule.placementMode = DirectorPlacementRule.PlacementMode.Approximate;
-                placementRule.minDistance = 3f;
-                placementRule.maxDistance = 20f;
-                placementRule.spawnOnTarget = self.gameObject.transform;
-                Xoroshiro128Plus rng = RoR2Application.rng;
-                DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(spawnCard, placementRule, rng);
-                directorSpawnRequest.summonerBodyObject = self.gameObject;
-                directorSpawnRequest.onSpawnedServer += spawnResult =>
+                for (int index = 0; index < ExitSkyLeap.cloneCount; ++index)
                 {
-                    Inventory cloneInventory = spawnResult.spawnedInstance.GetComponent<Inventory>();
-                    cloneInventory.GiveItem(RoR2Content.Items.HealthDecay, ExitSkyLeap.cloneDuration);
-                };
-                DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
+                    SpawnCard spawnCard = ModConfig.umbralClone.Value ? LegacyResourcesAPI.Load<SpawnCard>("SpawnCards/CharacterSpawnCards/cscBrotherIT") : LegacyResourcesAPI.Load<SpawnCard>("SpawnCards/CharacterSpawnCards/cscBrotherGlass");
+                    if (ModConfig.umbralClone.Value)
+                    {
+                        CharacterBody umbralCloneBody = spawnCard.prefab.gameObject.GetComponent<CharacterBody>();
+                        umbralCloneBody.baseMaxHealth = ModConfig.basehealth.Value / 10;
+                        umbralCloneBody.levelMaxHealth = ModConfig.levelhealth.Value / 10;
+                        umbralCloneBody.baseDamage = ModConfig.basedamage.Value * 100 / 4;
+                        umbralCloneBody.levelDamage = ModConfig.leveldamage.Value * 100 / 4;
+                    }    
+                    DirectorPlacementRule placementRule = new DirectorPlacementRule();
+                    placementRule.placementMode = DirectorPlacementRule.PlacementMode.Approximate;
+                    placementRule.minDistance = 3f;
+                    placementRule.maxDistance = 20f;
+                    placementRule.spawnOnTarget = self.gameObject.transform;
+                    Xoroshiro128Plus rng = RoR2Application.rng;
+                    DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(spawnCard, placementRule, rng);
+                    directorSpawnRequest.summonerBodyObject = self.gameObject;
+                    directorSpawnRequest.onSpawnedServer += spawnResult =>
+                    {
+                        Inventory cloneInventory = spawnResult.spawnedInstance.GetComponent<Inventory>();
+                        cloneInventory.GiveItem(RoR2Content.Items.HealthDecay, ExitSkyLeap.cloneDuration);
+                        if (ModConfig.umbralClone.Value)
+                            cloneInventory.GiveItem(RoR2Content.Items.InvadingDoppelganger);
+                    };
+                    DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
+                    if (ModConfig.umbralClone.Value)
+                        Chat.SendBroadcastChat(new Chat.SimpleChatMessage() { baseToken = $"<color=#{ColorUtility.ToHtmlStringRGBA(Color.red)}>The King's shadow emerges</color>" });
+                }
             }
             GenericSkill genericSkill = (bool)self.skillLocator ? self.skillLocator.special : null;
             if (!(bool)genericSkill)
@@ -694,7 +690,7 @@ namespace MithrixTheAccursed
                     ProjectileManager.instance.FireProjectile(UltChannelState.waveProjectileLeftPrefab, position, Util.QuaternionSafeLookRotation(forward), self.gameObject, self.characterBody.damage * 2f, FistSlam.waveProjectileForce, Util.CheckRoll(self.characterBody.crit, self.characterBody.master));
                 }
             }
-            orig.Invoke(self);
+            orig(self);
         }
 
         private static void SpellChannelEnterStateOnEnter(
@@ -702,7 +698,7 @@ namespace MithrixTheAccursed
           SpellChannelEnterState self)
         {
             SpellChannelEnterState.duration = 3f;
-            orig.Invoke(self);
+            orig(self);
         }
 
         private static void SpellChannelStateOnEnter(
@@ -713,7 +709,7 @@ namespace MithrixTheAccursed
             SpellChannelState.stealInterval = 0.1f;
             SpellChannelState.delayBeforeBeginningSteal = 0.0f;
             SpellChannelState.maxDuration = 15f;
-            orig.Invoke(self);
+            orig(self);
         }
 
         private static void SpellChannelExitStateOnEnter(
@@ -722,31 +718,31 @@ namespace MithrixTheAccursed
         {
             SpellChannelExitState.lendInterval = 0.04f;
             SpellChannelExitState.duration = 2.5f;
-            orig.Invoke(self);
+            orig(self);
         }
 
         private static void StaggerEnterOnEnter(On.EntityStates.BrotherMonster.StaggerEnter.orig_OnEnter orig, StaggerEnter self)
         {
             self.duration = 0.0f;
-            orig.Invoke(self);
+            orig(self);
         }
 
         private static void StaggerExitOnEnter(On.EntityStates.BrotherMonster.StaggerExit.orig_OnEnter orig, StaggerExit self)
         {
             self.duration = 0.0f;
-            orig.Invoke(self);
+            orig(self);
         }
 
         private static void StaggerLoopOnEnter(On.EntityStates.BrotherMonster.StaggerLoop.orig_OnEnter orig, StaggerLoop self)
         {
             self.duration = 0.0f;
-            orig.Invoke(self);
+            orig(self);
         }
 
         private static void TrueDeathStateOnEnter(On.EntityStates.BrotherMonster.TrueDeathState.orig_OnEnter orig, TrueDeathState self)
         {
             TrueDeathState.dissolveDuration = 5f;
-            orig.Invoke(self);
+            orig(self);
         }
 
         private static void CleanupPillar(On.EntityStates.BrotherMonster.WeaponSlam.orig_OnEnter orig, WeaponSlam self)
@@ -754,7 +750,7 @@ namespace MithrixTheAccursed
             GameObject projectilePrefab = WeaponSlam.pillarProjectilePrefab;
             projectilePrefab.transform.localScale = new Vector3(1f, 1f, 1f);
             projectilePrefab.GetComponent<ProjectileController>().ghostPrefab.transform.localScale = new Vector3(1f, 1f, 1f);
-            orig.Invoke(self);
+            orig(self);
         }
     }
 }
