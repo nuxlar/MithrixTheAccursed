@@ -54,15 +54,14 @@ namespace MithrixTheAccursed
 
         private void AdjustBaseStats()
         {
-            // first loop increases HP by 10% and Mobility by 5% and adds 1.25% per player to both
             Logger.LogMessage("Adjusting Phase 1 Stats");
             int playerCount = PlayerCharacterMasterController.instances.Count;
             float hpMultiplier;
             float mobilityMultiplier;
             if (Run.instance.loopClearCount == 1)
             {
-                hpMultiplier = (0.1f * Run.instance.loopClearCount) + (0.0125f * playerCount);
-                mobilityMultiplier = (0.05f * Run.instance.loopClearCount) + (0.0125f * playerCount);
+                hpMultiplier = (ModConfig.phase1BaseHPScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase1PlayerScaling.Value * playerCount);
+                mobilityMultiplier = (ModConfig.phase1BaseMobilityScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase1PlayerScaling.Value * playerCount);
             }
             else
             {
@@ -143,15 +142,14 @@ namespace MithrixTheAccursed
 
         private void AdjustPhase2Stats()
         {
-            // first loop increases HP by 20% and Mobility by 10% and adds 2.5% per player to both
             Logger.LogMessage("Adjusting Phase 2 Stats");
             int playerCount = PlayerCharacterMasterController.instances.Count;
             float hpMultiplier;
             float mobilityMultiplier;
             if (Run.instance.loopClearCount == 1)
             {
-                hpMultiplier = (0.2f * Run.instance.loopClearCount) + (0.025f * playerCount);
-                mobilityMultiplier = (0.1f * Run.instance.loopClearCount) + (0.025f * playerCount);
+                hpMultiplier = (ModConfig.phase2BaseHPScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase1PlayerScaling.Value * playerCount);
+                mobilityMultiplier = (ModConfig.phase2BaseMobilityScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase1PlayerScaling.Value * playerCount);
             }
             else
             {
@@ -186,15 +184,14 @@ namespace MithrixTheAccursed
 
         private void AdjustPhase3Stats()
         {
-            // first loop increases HP by 30% and Mobility by 15% and adds 3.75% per player to both
             Logger.LogMessage("Adjusting Phase 3 Stats");
             int playerCount = PlayerCharacterMasterController.instances.Count;
             float hpMultiplier;
             float mobilityMultiplier;
             if (Run.instance.loopClearCount == 1)
             {
-                hpMultiplier = (0.3f * Run.instance.loopClearCount) + (0.0375f * playerCount);
-                mobilityMultiplier = (0.15f * Run.instance.loopClearCount) + (0.0375f * playerCount);
+                hpMultiplier = (ModConfig.phase3BaseHPScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase1PlayerScaling.Value * playerCount);
+                mobilityMultiplier = (ModConfig.phase3BaseMobilityScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase1PlayerScaling.Value * playerCount);
             }    
             else
             {
@@ -233,12 +230,11 @@ namespace MithrixTheAccursed
 
         private void AdjustPhase4Stats()
         {
-            // first loop increases HP by 40% adds 5% per player to both
             Logger.LogMessage("Adjusting Phase 4 Stats");
             int playerCount = PlayerCharacterMasterController.instances.Count;
             float hpMultiplier;
             if (Run.instance.loopClearCount == 1)
-                hpMultiplier = (0.4f * Run.instance.loopClearCount) + (0.05f * playerCount);
+                hpMultiplier = (ModConfig.phase4BaseHPScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase1PlayerScaling.Value * playerCount);
             else
                 hpMultiplier = (ModConfig.phase4LoopHPScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase4PlayerScaling.Value * playerCount);
             GameObject MithrixHurt = LegacyResourcesAPI.Load<GameObject>("Prefabs/Characterbodies/BrotherHurtBody");
