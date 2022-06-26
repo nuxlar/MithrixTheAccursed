@@ -79,7 +79,7 @@ namespace MithrixTheAccursed
             accurse = config.Bind("General", "Accurse", true, "Accurse the King of Nothing");
             debuffResistance = config.Bind("General", "Freeze/Nullify Immune", false, "Toggle the debuff resistance for loop 1, will not turn off for loops 2 and up");
             debuffImmune = config.Bind("General", "Debuff Immune", false, "Toggle debuff immunity for loops 1 & 2, will not turn off for loops 3 and up");
-            phase3Elite = config.Bind("General", "Phase 3 Elite", 1, "Set Mithrix's Phase 3 elite (0: Off, 1: Malachite, 2: Perfected, 3: Voidtouched, 4: Blazing, 5: Overloading, 6: Glacial, 7: Random)");
+            phase3Elite = config.Bind("General", "Phase 3 Elite", 0, "Set Mithrix's Phase 3 elite (0: Off, 1: Malachite, 2: Perfected, 3: Voidtouched, 4: Blazing, 5: Overloading, 6: Glacial, 7: Random)");
             umbralMithrix = config.Bind("General", "Umbral Mithrix", false, "The King of Nothing becomes a shadow of himself (purely cosmetic, Drippy Mithrix)");
             umbralClone = config.Bind("General", "Umbral Clone", true, "A true shadow clone (mimics ALL of his abilities/stats) splits from The Accursed King of Nothing in phase 3");
 
@@ -121,24 +121,24 @@ namespace MithrixTheAccursed
 
             PrimStocks = config.Bind("Skills", "Primary Stocks", 2, "Max Stocks for Mithrix's Weapon Slam. Vanilla: 1");
             SecStocks = config.Bind("Skills", "Secondary Stocks", 2, "Max Stocks for Mithrix's Dash Attack. Vanilla: 1");
-            UtilStocks = config.Bind("Skills", "Util Stocks", 4, "Max Stocks for Mithrix's Dash. Vanilla: 2");
+            UtilStocks = config.Bind("Skills", "Util Stocks", 3, "Max Stocks for Mithrix's Dash. Vanilla: 2");
             PrimCD = config.Bind("Skills", "Primary Cooldown", 3f, "Cooldown for Mithrix's Weapon Slam. Vanilla: 4");
-            SecCD = config.Bind("Skills", "Secondary Cooldown", 3f, "Cooldown for Mithrix's Dash Attack. Vanilla: 5");
-            UtilCD = config.Bind("Skills", "Util Cooldown", 1f, "Cooldown for Mithrix's Dash. Vanilla: 3");
+            SecCD = config.Bind("Skills", "Secondary Cooldown", 3.5f, "Cooldown for Mithrix's Dash Attack. Vanilla: 5");
+            UtilCD = config.Bind("Skills", "Util Cooldown", 1.5f, "Cooldown for Mithrix's Dash. Vanilla: 3");
             SpecialCD = config.Bind("Skills", "Special Cooldown", 30f, "Cooldown for Mithrix's Jump Attack. Vanilla: 30");
 
-            SlamWaveProjectileCount = config.Bind("Skill Mods", "Wave Projectile Count", 12, "Orbs and Waves fired by weapon slam in a circle. Vanilla: N/A");
+            SlamWaveProjectileCount = config.Bind("Skill Mods", "Wave Projectile Count", 8, "Orbs and Waves fired by weapon slam in a circle. Vanilla: N/A");
             SecondaryFan = config.Bind("Skill Mods", "Fan Count", 3, "half the shards fired in a fan by the secondary skill. Vanilla: N/A");
             UtilityShotgun = config.Bind("Skill Mods", "Shotgun Count", 3, "shots fired in a shotgun by utility. Vanilla: N/A");
-            LunarShardAdd = config.Bind("Skill Mods", "Shard Add Count", 3, "Bonus shards added to each shot of lunar shards. Vanilla: N/A");
-            UltimateWaves = config.Bind("Skill Mods", "Wave Per Shot", 12, "Waves fired by ultimate per shot. Vanilla: 9");
+            LunarShardAdd = config.Bind("Skill Mods", "Shard Add Count", 2, "Bonus shards added to each shot of lunar shards. Vanilla: N/A");
+            UltimateWaves = config.Bind("Skill Mods", "Wave Per Shot", 18, "Waves fired by ultimate per shot. Vanilla: 9");
             UltimateCount = config.Bind("Skill Mods", "Wave Shots", 8, "Total shots of ultimate. Vanilla: 4");
-            UltimateDuration = config.Bind("Skill Mods", "Wave Duration", 5.5f, "how long ultimate lasts. Vanilla: 8");
+            UltimateDuration = config.Bind("Skill Mods", "Wave Duration", 8f, "how long ultimate lasts. Vanilla: 8");
             cloneduration = config.Bind("Skill Mods", "Clone Duration", 30, "how long clones take to despawn. Vanilla: 0");
             JumpRecast = config.Bind("Skill Mods", "Recast Chance", 0f, "Chance Mithrix has to recast his jump skill. USE WITH CAUTION. Vanilla: 0");
             JumpPause = config.Bind("Skill Mods", "Jump Delay", 0.3f, "How long Mithrix spends in the air when using his jump special. Vanilla: 3");
             JumpWaveCount = config.Bind("Skill Mods", "Jump Wave Count", 18, "Shockwave count when Mithrix lands after a jump. Vanilla: 12");
-            ShardHoming = config.Bind("Skill Mods", "Shard Homing", 40f, "How strongly lunar shards home in to targets. Vanilla: 20");
+            ShardHoming = config.Bind("Skill Mods", "Shard Homing", 30f, "How strongly lunar shards home in to targets. Vanilla: 20");
             ShardRange = config.Bind("Skill Mods", "Shard Range", 100f, "Range (distance) in which shards look for targets. Vanilla: 80");
             ShardCone = config.Bind("Skill Mods", "Shard Cone", 120f, "Cone (Angle) in which shards look for targets. Vanilla: 90");
 

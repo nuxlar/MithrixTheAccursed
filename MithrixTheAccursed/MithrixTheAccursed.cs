@@ -19,37 +19,37 @@ namespace MithrixTheAccursed
         private bool hasfired;
         int phaseCounter = 0;
         GameObject Mithrix = LegacyResourcesAPI.Load<GameObject>("Prefabs/Characterbodies/BrotherBody");
+        GameObject MithrixHaunt = LegacyResourcesAPI.Load<GameObject>("Prefabs/Characterbodies/BrotherHauntBody");
+
         public void Awake()
         {
             ModConfig.InitConfig(Config);
-            if (ModConfig.accurse.Value)
-            {
-                On.RoR2.Run.Start += OnRunStart;
-                On.RoR2.CharacterMaster.OnBodyStart += CharacterMasterOnBodyStart;
-                On.RoR2.CharacterModel.UpdateOverlays += UpdateOverlays;
-                On.EntityStates.Missions.BrotherEncounter.BrotherEncounterPhaseBaseState.OnEnter += BrotherEncounterPhaseBaseStateOnEnter;
-                On.EntityStates.Missions.BrotherEncounter.Phase2.OnEnter += Phase2OnEnter;
-                On.EntityStates.Missions.BrotherEncounter.Phase3.OnEnter += Phase3OnEnter;
-                On.EntityStates.Missions.BrotherEncounter.Phase4.OnEnter += Phase4OnEnter;
-                On.RoR2.Items.ImmuneToDebuffBehavior.TryApplyOverride += TryApplyOverride;
-                On.EntityStates.BrotherMonster.ExitSkyLeap.OnEnter += ExitSkyLeapOnEnter;
-                On.EntityStates.FrozenState.OnEnter += FrozenStateOnEnter;
-                On.RoR2.CharacterBody.AddTimedBuff_BuffDef_float += AddTimedBuff_BuffDef_float;
-                On.EntityStates.BrotherMonster.SlideIntroState.OnEnter += SlideIntroStateOnEnter;
-                On.EntityStates.BrotherMonster.SprintBash.OnEnter += SprintBashOnEnter;
-                On.EntityStates.BrotherMonster.WeaponSlam.OnEnter += WeaponSlamOnEnter;
-                On.EntityStates.BrotherMonster.WeaponSlam.FixedUpdate += WeaponSlamFixedUpdate;
-                On.EntityStates.BrotherMonster.Weapon.FireLunarShards.OnEnter += FireLunarShardsOnEnter;
-                On.EntityStates.BrotherMonster.FistSlam.OnEnter += FistSlamOnEnter;
-                On.EntityStates.BrotherMonster.SpellChannelEnterState.OnEnter += SpellChannelEnterStateOnEnter;
-                On.EntityStates.BrotherMonster.SpellChannelState.OnEnter += SpellChannelStateOnEnter;
-                On.EntityStates.BrotherMonster.SpellChannelExitState.OnEnter += SpellChannelExitStateOnEnter;
-                On.EntityStates.BrotherMonster.StaggerEnter.OnEnter += StaggerEnterOnEnter;
-                On.EntityStates.BrotherMonster.StaggerExit.OnEnter += StaggerExitOnEnter;
-                On.EntityStates.BrotherMonster.StaggerLoop.OnEnter += StaggerLoopOnEnter;
-                On.EntityStates.BrotherMonster.TrueDeathState.OnEnter += TrueDeathStateOnEnter;
-                On.EntityStates.BrotherMonster.WeaponSlam.OnEnter -= CleanupPillar;
-            }
+            On.RoR2.Run.Start += OnRunStart;
+            On.RoR2.CharacterMaster.OnBodyStart += CharacterMasterOnBodyStart;
+            On.RoR2.CharacterModel.UpdateOverlays += UpdateOverlays;
+            On.EntityStates.Missions.BrotherEncounter.BrotherEncounterPhaseBaseState.OnEnter += BrotherEncounterPhaseBaseStateOnEnter;
+            On.EntityStates.Missions.BrotherEncounter.Phase2.OnEnter += Phase2OnEnter;
+            On.EntityStates.Missions.BrotherEncounter.Phase3.OnEnter += Phase3OnEnter;
+            On.EntityStates.Missions.BrotherEncounter.Phase4.OnEnter += Phase4OnEnter;
+            On.RoR2.Items.ImmuneToDebuffBehavior.TryApplyOverride += TryApplyOverride;
+            On.EntityStates.BrotherMonster.ExitSkyLeap.OnEnter += ExitSkyLeapOnEnter;
+            On.EntityStates.FrozenState.OnEnter += FrozenStateOnEnter;
+            On.RoR2.CharacterBody.AddTimedBuff_BuffDef_float += AddTimedBuff_BuffDef_float;
+            On.EntityStates.BrotherMonster.SlideIntroState.OnEnter += SlideIntroStateOnEnter;
+            On.EntityStates.BrotherMonster.SprintBash.OnEnter += SprintBashOnEnter;
+            On.EntityStates.BrotherMonster.WeaponSlam.OnEnter += WeaponSlamOnEnter;
+            On.EntityStates.BrotherMonster.WeaponSlam.FixedUpdate += WeaponSlamFixedUpdate;
+            On.EntityStates.BrotherMonster.Weapon.FireLunarShards.OnEnter += FireLunarShardsOnEnter;
+            On.EntityStates.BrotherMonster.FistSlam.OnEnter += FistSlamOnEnter;
+            On.EntityStates.BrotherMonster.SpellChannelEnterState.OnEnter += SpellChannelEnterStateOnEnter;
+            On.EntityStates.BrotherMonster.SpellChannelState.OnEnter += SpellChannelStateOnEnter;
+            On.EntityStates.BrotherMonster.SpellChannelExitState.OnEnter += SpellChannelExitStateOnEnter;
+            On.EntityStates.BrotherMonster.StaggerEnter.OnEnter += StaggerEnterOnEnter;
+            On.EntityStates.BrotherMonster.StaggerExit.OnEnter += StaggerExitOnEnter;
+            On.EntityStates.BrotherMonster.StaggerLoop.OnEnter += StaggerLoopOnEnter;
+            On.EntityStates.BrotherMonster.TrueDeathState.OnEnter += TrueDeathStateOnEnter;
+            On.EntityStates.BrotherMonster.WeaponSlam.OnEnter -= CleanupPillar;
+            On.EntityStates.BrotherHaunt.FireRandomProjectiles.OnEnter += FireRandomProjectiles;
         }
 
         private void AdjustBaseStats()
@@ -71,6 +71,7 @@ namespace MithrixTheAccursed
             CharacterBody MithrixBody = Mithrix.GetComponent<CharacterBody>();
             CharacterDirection MithrixDirection = Mithrix.GetComponent<CharacterDirection>();
             CharacterMotor MithrixMotor = Mithrix.GetComponent<CharacterMotor>();
+            MithrixBody.name = "MithrixBody";
 
             MithrixMotor.mass = ModConfig.mass.Value;
             MithrixMotor.airControl = ModConfig.aircontrol.Value;
@@ -222,10 +223,16 @@ namespace MithrixTheAccursed
             MithrixDirection.turnSpeed = ModConfig.turningspeed.Value + (ModConfig.turningspeed.Value * mobilityMultiplier);
 
             WeaponSlam.duration = (3.5f / ModConfig.baseattackspeed.Value);
-            if (playerCount > 4)
-                ExitSkyLeap.cloneCount = 4;
-            else
-                ExitSkyLeap.cloneCount = 2 + (playerCount - 2);
+            if (ModConfig.umbralClone.Value)
+            {
+                ExitSkyLeap.cloneCount = 1;
+            } else
+            {
+                if (playerCount > 4)
+                    ExitSkyLeap.cloneCount = 4;
+                else
+                    ExitSkyLeap.cloneCount = 2 + (playerCount - 2);
+            }
         }
 
         private void AdjustPhase4Stats()
@@ -265,14 +272,14 @@ namespace MithrixTheAccursed
 
         private void FrozenStateOnEnter(On.EntityStates.FrozenState.orig_OnEnter orig, EntityStates.FrozenState self)
         {
-            if (self.characterBody.name == "BrotherBody(Clone)" && (Run.instance.loopClearCount >= 2 || ModConfig.debuffResistance.Value))
+            if (self.characterBody.name == "MithrixBody(Clone)" && (Run.instance.loopClearCount >= 2 || ModConfig.debuffResistance.Value))
                 return;
             orig(self);
         }
 
         private void AddTimedBuff_BuffDef_float(On.RoR2.CharacterBody.orig_AddTimedBuff_BuffDef_float orig, CharacterBody self, BuffDef buffDef, float duration)
         {
-            if (self.name == "BrotherBody(Clone)" && buffDef == RoR2Content.Buffs.Nullified && (Run.instance.loopClearCount >= 2 || ModConfig.debuffResistance.Value))
+            if (self.name == "MithrixBody(Clone)" && buffDef == RoR2Content.Buffs.Nullified && (Run.instance.loopClearCount >= 2 || ModConfig.debuffResistance.Value))
                 return;
             orig(self, buffDef, duration);
         }
@@ -284,7 +291,7 @@ namespace MithrixTheAccursed
             {
                 if (component.isProtected)
                     return true;
-                if (body.name == "BrotherBody(Clone)" && (Run.instance.loopClearCount >= 3 || ModConfig.debuffImmune.Value))
+                if (body.name == "MithrixBody(Clone)" && (Run.instance.loopClearCount >= 3 || ModConfig.debuffImmune.Value))
                     return true;
                 else
                 {
@@ -306,6 +313,25 @@ namespace MithrixTheAccursed
         private void CharacterMasterOnBodyStart(On.RoR2.CharacterMaster.orig_OnBodyStart orig, CharacterMaster self, CharacterBody body)
         {
             orig(self, body);
+            if (ModConfig.umbralClone.Value && body.name == "MithrixBody(Clone)" && self.inventory.GetItemCount(RoR2Content.Items.HealthDecay) == ModConfig.cloneduration.Value)
+            {
+                // Adjust stats to account for Doppelganger item
+                if (!ModConfig.umbralMithrix.Value)
+                {
+                    int playerCount = PlayerCharacterMasterController.instances.Count;
+                    float hpMultiplier;
+                    if (Run.instance.loopClearCount == 1)
+                        hpMultiplier = (ModConfig.phase3BaseHPScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase3PlayerScaling.Value * playerCount);
+                    else
+                        hpMultiplier = (ModConfig.phase3LoopHPScaling.Value * Run.instance.loopClearCount) + (ModConfig.phase3PlayerScaling.Value * playerCount);
+                    body.maxHealth = (ModConfig.basehealth.Value + (ModConfig.basehealth.Value * hpMultiplier)) / 10;
+                    body.levelMaxHealth = (ModConfig.levelhealth.Value + (ModConfig.levelhealth.Value * hpMultiplier)) / 10;
+                    body.baseDamage = ModConfig.basedamage.Value * 100 / 4;
+                    body.levelDamage = ModConfig.leveldamage.Value * 100 / 4;
+                }
+                self.inventory.GiveItem(RoR2Content.Items.InvadingDoppelganger);
+                Chat.SendBroadcastChat(new Chat.SimpleChatMessage() { baseToken = $"<color=#6a45b5>The Accursed King's shadow emerges</color>" });
+            }
             if (self.name == "BrotherHurtBody(Clone)")
                 body.AddBuff(RoR2Content.Buffs.Immune);
             if (self.name == "BrotherMaster(Clone)" && (Run.instance.loopClearCount >= 3 || ModConfig.debuffImmune.Value))
@@ -360,8 +386,8 @@ namespace MithrixTheAccursed
         {
             if (self.body)
             {
-                // Make sure config value is enabled, then give umbra item to Mithrix, his glass clones, and phase 4 Mithrix
-                if (ModConfig.umbralMithrix.Value && (self.body.name == "BrotherBody(Clone)" || self.body.name == "BrotherGlassBody(Clone)" || self.body.name == "BrotherHurtBody(Clone)"))
+                // Make sure config value is enabled, then give umbra item to Mithrix, and phase 4 Mithrix
+                if (ModConfig.umbralMithrix.Value && (self.body.name == "MithrixBody(Clone)" || self.body.name == "BrotherHurtBody(Clone)"))
                     self.body.inventory.GiveItem(RoR2Content.Items.InvadingDoppelganger);
             }
             orig(self);
@@ -489,6 +515,15 @@ namespace MithrixTheAccursed
             orig(self);
         }
 
+        private static void FireRandomProjectiles(On.EntityStates.BrotherHaunt.FireRandomProjectiles.orig_OnEnter orig, EntityStates.BrotherHaunt.FireRandomProjectiles self)
+        {
+            EntityStates.BrotherHaunt.FireRandomProjectiles.maximumCharges = 150;
+            EntityStates.BrotherHaunt.FireRandomProjectiles.chargeRechargeDuration = 0.03f;
+            EntityStates.BrotherHaunt.FireRandomProjectiles.chanceToFirePerSecond = 0.5f;
+            EntityStates.BrotherHaunt.FireRandomProjectiles.damageCoefficient = 15f;
+            orig.Invoke(self);
+        }
+
         private void ExitSkyLeapOnEnter(On.EntityStates.BrotherMonster.ExitSkyLeap.orig_OnEnter orig, ExitSkyLeap self)
         {
             // EntityStates BaseState OnEnter
@@ -517,20 +552,12 @@ namespace MithrixTheAccursed
                 return;
             if ((double)UnityEngine.Random.value < ExitSkyLeap.recastChance)
                 self.recast = true;
-            if (self.characterBody.name != "BrotherITBody(Clone)")
+            if (self.characterBody.inventory.GetItemCount(RoR2Content.Items.HealthDecay) != ModConfig.cloneduration.Value)
             {
                 for (int index = 0; index < ExitSkyLeap.cloneCount; ++index)
                 {
                     SpawnCard spawnCard = ModConfig.umbralClone.Value ? LegacyResourcesAPI.Load<SpawnCard>("SpawnCards/CharacterSpawnCards/cscBrotherIT") : LegacyResourcesAPI.Load<SpawnCard>("SpawnCards/CharacterSpawnCards/cscBrotherGlass");
-                    if (ModConfig.umbralClone.Value)
-                    {
-                        CharacterBody umbralCloneBody = spawnCard.prefab.gameObject.GetComponent<CharacterBody>();
-                        umbralCloneBody.baseMaxHealth = ModConfig.basehealth.Value / 10;
-                        umbralCloneBody.levelMaxHealth = ModConfig.levelhealth.Value / 10;
-                        umbralCloneBody.baseDamage = ModConfig.basedamage.Value * 100 / 4;
-                        umbralCloneBody.levelDamage = ModConfig.leveldamage.Value * 100 / 4;
-                    }    
-                    DirectorPlacementRule placementRule = new DirectorPlacementRule();
+                    DirectorPlacementRule placementRule = new();
                     placementRule.placementMode = DirectorPlacementRule.PlacementMode.Approximate;
                     placementRule.minDistance = 3f;
                     placementRule.maxDistance = 20f;
@@ -538,16 +565,8 @@ namespace MithrixTheAccursed
                     Xoroshiro128Plus rng = RoR2Application.rng;
                     DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(spawnCard, placementRule, rng);
                     directorSpawnRequest.summonerBodyObject = self.gameObject;
-                    directorSpawnRequest.onSpawnedServer += spawnResult =>
-                    {
-                        Inventory cloneInventory = spawnResult.spawnedInstance.GetComponent<Inventory>();
-                        cloneInventory.GiveItem(RoR2Content.Items.HealthDecay, ExitSkyLeap.cloneDuration);
-                        if (ModConfig.umbralClone.Value)
-                            cloneInventory.GiveItem(RoR2Content.Items.InvadingDoppelganger);
-                    };
+                    directorSpawnRequest.onSpawnedServer += spawnResult => spawnResult.spawnedInstance.GetComponent<Inventory>().GiveItem(RoR2Content.Items.HealthDecay, ExitSkyLeap.cloneDuration);
                     DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
-                    if (ModConfig.umbralClone.Value)
-                        Chat.SendBroadcastChat(new Chat.SimpleChatMessage() { baseToken = $"<color=#{ColorUtility.ToHtmlStringRGBA(Color.red)}>The King's shadow emerges</color>" });
                 }
             }
             GenericSkill genericSkill = (bool)self.skillLocator ? self.skillLocator.special : null;
