@@ -7,9 +7,12 @@ namespace MithrixTheAccursed
 {
     internal class ModConfig
     {
-        public static ConfigEntry<bool> accurse;
-        public static ConfigEntry<int> phase3Elite;
-        public static ConfigEntry<bool> umbralMithrix;
+        public static ConfigEntry<bool> phase1Changes;
+        public static ConfigEntry<bool> phase2Mithrix;
+        public static ConfigEntry<bool> phase2Doppel;
+        public static ConfigEntry<bool> phase3Changes;
+        //public static ConfigEntry<bool> phase4Changes;
+        public static ConfigEntry<int> phase2Elite;
         public static ConfigEntry<bool> debuffImmune;
         public static ConfigEntry<bool> debuffResistance;
 
@@ -63,29 +66,44 @@ namespace MithrixTheAccursed
 
         public static void InitConfig(ConfigFile config)
         {
-            accurse = config.Bind("General", "Accurse", true, "Accurse the King of Nothing");
-            debuffImmune = config.Bind("General", "Debuff Immune", false, "The curse renders the King immune to debuffs");
-            debuffResistance = config.Bind("General", "Freeze/Nullify Immune", false, "Toggle the debuff resistance");
-            phase3Elite = config.Bind("General", "Phase 3 Elite", 1, "Set Mithrix's Phase 3 elite (0: Off, 1: Malachite, 2: Perfected, 3: Voidtouched, 4: Blazing, 5: Overloading, 6: Glacial, 7: Celestine)");
-            umbralMithrix = config.Bind("General", "Umbral Mithrix", false, "The King of Nothing becomes a shadow of himself");
+            phase1Changes = config.Bind("General", "Phase 1 Changes", true, "Toggle P1 changes: the umbral clone after skyleap");
+            phase2Mithrix = config.Bind("General", "Phase 2 Mithrix", true, "Toggle P2 change: Mithrix spawning in instead of chimera");
+            phase2Doppel = config.Bind("General", "Phase 2 Doppel Event", true, "Toggle P2 change: The vengeance event triggering (player doppelgangers)");
+            phase3Changes = config.Bind("General", "Phase 3 Changes", true, "Toggle P3 changes: Mithrix splitting into 2 and no clones on skyleap");
+            //phase4Changes = config.Bind("General", "Phase 4 Changes", true, "Toggle the changes to Phase 4 (stationary Mithrix + reworked fist slam + pizza slices + glass clone)");
+            phase2Elite = config.Bind("General", "Phase 2 Elite", 1, "Set Mithrix's Phase 2 elite (0: Off, 1: Malachite, 2: Perfected, 3: Voidtouched, 4: Blazing, 5: Overloading, 6: Glacial, 7: Random)");
+            debuffResistance = config.Bind("General", "Freeze/Nullify Immune", false, "Toggle the debuff resistance for loop 1, will not turn off for loops 2 and up");
+            debuffImmune = config.Bind("General", "Debuff Immune", false, "Toggle debuff immunity for loops 1 & 2, will not turn off for loops 3 and up");
 
-            phase1LoopScaling = config.Bind("Scaling", "Phase 1 Loop", 0.05f, "Stat boost percentage for Phase 1 PER LOOP");
-            phase2LoopScaling = config.Bind("Scaling", "Phase 2 Loop", 0.1f, "Stat boost percentage for Phase 2 PER LOOP");
-            phase3LoopScaling = config.Bind("Scaling", "Phase 3 Loop", 0.2f, "Stat boost percentage for Phase 3 PER LOOP");
-            phase4LoopScaling = config.Bind("Scaling", "Phase 4 Loop", 0.05f, "Stat boost percentage for Phase 4 PER LOOP");
-            phase1PlayerScaling = config.Bind("Scaling", "Phase 1 Player", 0.0125f, "Stat boost percentage for Phase 1 PER PLAYER");
-            phase2PlayerScaling = config.Bind("Scaling", "Phase 2 Player", 0.025f, "Stat boost percentage for Phase 2 PER PLAYER");
-            phase3PlayerScaling = config.Bind("Scaling", "Phase 3 Player", 0.05f, "Stat boost percentage for Phase 3 PER PLAYER");
-            phase4PlayerScaling = config.Bind("Scaling", "Phase 4 Player", 0.0125f, "Stat boost percentage for Phase 4 PER PLAYER");
+            phase1BaseHPScaling = config.Bind("Scaling First Loop", "P1 HP", 0.0125f, "HP boost percentage for Phase 1 FIRST LOOP (5 stages)");
+            phase2BaseHPScaling = config.Bind("Scaling First Loop", "P2 HP", 0.05f, "HP boost percentage for Phase 2 FIRST LOOP");
+            phase3BaseHPScaling = config.Bind("Scaling First Loop", "P3 HP", 0.075f, "HP boost percentage for Phase 3 FIRST LOOP");
+            phase4BaseHPScaling = config.Bind("Scaling First Loop", "P4 HP", 0.1f, "HP boost percentage for Phase 4 FIRST LOOP");
+            phase1BaseMobilityScaling = config.Bind("Scaling First Loop", "P1 Mobility", 0.0125f, "Mobility boost percentage for Phase 1 FIRST LOOP");
+            phase2BaseMobilityScaling = config.Bind("Scaling First Loop", "P2 Mobility", 0.025f, "Mobility boost percentage for Phase 2 FIRST LOOP");
+            phase3BaseMobilityScaling = config.Bind("Scaling First Loop", "P3 Mobility", 0.05f, "Mobility boost percentage for Phase 3 FIRST LOOP");
 
-            basehealth = config.Bind("Stats", "Base Health", 1750f, "Vanilla: 1400");
-            levelhealth = config.Bind("Stats", "Level Health", 250f, "Health gained per level. Vanilla: 420");
-            basedamage = config.Bind("Stats", "Base Damage", 18f, "Vanilla: 16");
-            leveldamage = config.Bind("Stats", "Level Damage", 4f, "Damage gained per level. Vanilla: 3.2");
-            basearmor = config.Bind("Stats", "Base Armor", 35f, "Vanilla: 20");
+            phase1LoopHPScaling = config.Bind("Scaling Per Loop", "P1 Loop HP", 0.05f, "HP boost percentage for Phase 1 PER LOOP (every 5 stages)");
+            phase2LoopHPScaling = config.Bind("Scaling Per Loop", "P2 Loop HP", 0.075f, "HP boost percentage for Phase 2 PER LOOP");
+            phase3LoopHPScaling = config.Bind("Scaling Per Loop", "P3 Loop HP", 0.1f, "HP boost percentage for Phase 3 PER LOOP");
+            phase4LoopHPScaling = config.Bind("Scaling Per Loop", "P4 Loop HP", 0.15f, "HP boost percentage for Phase 4 PER LOOP");
+            phase1LoopMobilityScaling = config.Bind("Scaling Per Loop", "P1 Loop Mobility", 0.025f, "Mobility (movementspd, acceleration, turningspd) boost percentage for Phase 1 PER LOOP");
+            phase2LoopMobilityScaling = config.Bind("Scaling Per Loop", "P2 Loop Mobility", 0.05f, "Mobility boost percentage for Phase 2 PER LOOP");
+            phase3LoopMobilityScaling = config.Bind("Scaling Per Loop", "P3 Loop Mobility", 0.075f, "Mobility boost percentage for Phase 3 PER LOOP");
+
+            phase1PlayerScaling = config.Bind("Player Scaling", "P1 Scaling", 0.0125f, "Stat (HP + Mobility) boost percentage for Phase 1 PER PLAYER");
+            phase2PlayerScaling = config.Bind("Player Scaling", "P2 Scaling", 0.025f, "Stat (HP + Mobility) boost percentage for Phase 2 PER PLAYER");
+            phase3PlayerScaling = config.Bind("Player Scaling", "P3 Scaling", 0.05f, "Stat (HP + Mobility) boost percentage for Phase 3 PER PLAYER");
+            phase4PlayerScaling = config.Bind("Player Scaling", "P4 Scaling", 0.075f, "Stat (HP) boost percentage for Phase 4 PER PLAYER");
+
+            basehealth = config.Bind("Stats", "Base Health", 1400f, "Vanilla: 1400");
+            levelhealth = config.Bind("Stats", "Level Health", 420f, "Health gained per level. Vanilla: 420");
+            basedamage = config.Bind("Stats", "Base Damage", 15f, "Vanilla: 16");
+            leveldamage = config.Bind("Stats", "Level Damage", 2.75f, "Damage gained per level. Vanilla: 3.2");
+            basearmor = config.Bind("Stats", "Base Armor", 30f, "Vanilla: 20");
             baseattackspeed = config.Bind("Stats", "Base Attack Speed", 1.25f, "Vanilla: 1");
 
-            basespeed = config.Bind("Movement", "Base Move Speed", 18f, "Vanilla: 15");
+            basespeed = config.Bind("Movement", "Base Move Speed", 15f, "Vanilla: 15");
             mass = config.Bind("Movement", "Mass", 5000f, "Recommended to increase if you increase his movement speed. Vanilla: 900");
             turningspeed = config.Bind("Movement", "Turn Speed", 810f, "Vanilla: 270");
             jumpingpower = config.Bind("Movement", "Moon Shoes", 70f, "How high Mithrix jumps. Vanilla: 25");
@@ -95,34 +113,37 @@ namespace MithrixTheAccursed
 
             PrimStocks = config.Bind("Skills", "Primary Stocks", 2, "Max Stocks for Mithrix's Weapon Slam. Vanilla: 1");
             SecStocks = config.Bind("Skills", "Secondary Stocks", 2, "Max Stocks for Mithrix's Dash Attack. Vanilla: 1");
-            UtilStocks = config.Bind("Skills", "Util Stocks", 4, "Max Stocks for Mithrix's Dash. Vanilla: 2");
+            UtilStocks = config.Bind("Skills", "Util Stocks", 3, "Max Stocks for Mithrix's Dash. Vanilla: 2");
             PrimCD = config.Bind("Skills", "Primary Cooldown", 3f, "Cooldown for Mithrix's Weapon Slam. Vanilla: 4");
-            SecCD = config.Bind("Skills", "Secondary Cooldown", 3f, "Cooldown for Mithrix's Dash Attack. Vanilla: 5");
-            UtilCD = config.Bind("Skills", "Util Cooldown", 1f, "Cooldown for Mithrix's Dash. Vanilla: 3");
+            SecCD = config.Bind("Skills", "Secondary Cooldown", 3.5f, "Cooldown for Mithrix's Dash Attack. Vanilla: 5");
+            UtilCD = config.Bind("Skills", "Util Cooldown", 1.5f, "Cooldown for Mithrix's Dash. Vanilla: 3");
             SpecialCD = config.Bind("Skills", "Special Cooldown", 30f, "Cooldown for Mithrix's Jump Attack. Vanilla: 30");
 
-            SlamWaveProjectileCount = config.Bind("Skill Mods", "Wave Projectile Count", 12, "Orbs and Waves fired by weapon slam in a circle. Vanilla: N/A");
+            SlamWaveProjectileCount = config.Bind("Skill Mods", "Wave Projectile Count", 8, "Orbs and Waves fired by weapon slam in a circle. Vanilla: N/A");
             SecondaryFan = config.Bind("Skill Mods", "Fan Count", 3, "half the shards fired in a fan by the secondary skill. Vanilla: N/A");
             UtilityShotgun = config.Bind("Skill Mods", "Shotgun Count", 3, "shots fired in a shotgun by utility. Vanilla: N/A");
-            LunarShardAdd = config.Bind("Skill Mods", "Shard Add Count", 3, "Bonus shards added to each shot of lunar shards. Vanilla: N/A");
-            UltimateWaves = config.Bind("Skill Mods", "Wave Per Shot", 12, "Waves fired by ultimate per shot. Vanilla: 9");
+            LunarShardAdd = config.Bind("Skill Mods", "Shard Add Count", 1, "Bonus shards added to each shot of lunar shards. Vanilla: N/A");
+            UltimateWaves = config.Bind("Skill Mods", "Wave Per Shot", 10, "Waves fired by ultimate per shot. Vanilla: 4");
             UltimateCount = config.Bind("Skill Mods", "Wave Shots", 8, "Total shots of ultimate. Vanilla: 4");
-            UltimateDuration = config.Bind("Skill Mods", "Wave Duration", 5.5f, "how long ultimate lasts. Vanilla: 8");
+            UltimateDuration = config.Bind("Skill Mods", "Wave Duration", 8f, "how long ultimate lasts. Vanilla: 8");
             cloneduration = config.Bind("Skill Mods", "Clone Duration", 30, "how long clones take to despawn. Vanilla: 0");
             JumpRecast = config.Bind("Skill Mods", "Recast Chance", 0f, "Chance Mithrix has to recast his jump skill. USE WITH CAUTION. Vanilla: 0");
             JumpPause = config.Bind("Skill Mods", "Jump Delay", 0.3f, "How long Mithrix spends in the air when using his jump special. Vanilla: 3");
             JumpWaveCount = config.Bind("Skill Mods", "Jump Wave Count", 18, "Shockwave count when Mithrix lands after a jump. Vanilla: 12");
-            ShardHoming = config.Bind("Skill Mods", "Shard Homing", 40f, "How strongly lunar shards home in to targets. Vanilla: 20");
+            ShardHoming = config.Bind("Skill Mods", "Shard Homing", 25f, "How strongly lunar shards home in to targets. Vanilla: 20");
             ShardRange = config.Bind("Skill Mods", "Shard Range", 100f, "Range (distance) in which shards look for targets. Vanilla: 80");
             ShardCone = config.Bind("Skill Mods", "Shard Cone", 120f, "Cone (Angle) in which shards look for targets. Vanilla: 90");
 
             // Risk Of Options Setup
             // General
-            ModSettingsManager.AddOption(new CheckBoxOption(accurse));
+            ModSettingsManager.AddOption(new CheckBoxOption(phase1Changes));
+            ModSettingsManager.AddOption(new CheckBoxOption(phase2Mithrix));
+            ModSettingsManager.AddOption(new CheckBoxOption(phase2Doppel));
+            ModSettingsManager.AddOption(new CheckBoxOption(phase3Changes));
+            //ModSettingsManager.AddOption(new CheckBoxOption(phase4Changes));
             ModSettingsManager.AddOption(new CheckBoxOption(debuffImmune));
             ModSettingsManager.AddOption(new CheckBoxOption(debuffResistance));
-            ModSettingsManager.AddOption(new CheckBoxOption(umbralMithrix));
-            ModSettingsManager.AddOption(new IntSliderOption(phase3Elite, new IntSliderConfig() { min = 0, max = 7 }));
+            ModSettingsManager.AddOption(new IntSliderOption(phase2Elite, new IntSliderConfig() { min = 0, max = 7 }));
             // Scaling
             ModSettingsManager.AddOption(new StepSliderOption(phase1LoopScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
             ModSettingsManager.AddOption(new StepSliderOption(phase2LoopScaling, new StepSliderConfig() { min = 0, max = 1, increment = 0.025f }));
@@ -170,7 +191,7 @@ namespace MithrixTheAccursed
             ModSettingsManager.AddOption(new StepSliderOption(ShardRange, new StepSliderConfig() { min = 50, max = 200, increment = 10f }));
             ModSettingsManager.AddOption(new StepSliderOption(ShardCone, new StepSliderConfig() { min = 80f, max = 180, increment = 10f }));
 
-            ModSettingsManager.SetModDescription("Fight the Accursed King of Nothing in an even more intense boss battle.");
+            ModSettingsManager.SetModDescription("The Accursed King of Nothing uses shadows and indiscriminate firepower to overwhelm all who oppose him.");
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿{
 	"name": "MithrixTheAccursed",
-	"version_number": "1.1.1",
+	"version_number": "2.0.1",
 	"website_url": "https://github.com/nuxlar/MithrixTheAccursed",
-	"description": "Fight against the Accursed King of Nothing in an even more intense boss battle.",
+	"description": "The Accursed King of Nothing uses shadows and indiscriminate firepower to overwhelm all who oppose him.",
 	"dependencies": [
 		"bbepis-BepInExPack-5.4.9",
 		"RiskofThunder-HookGenPatcher-1.2.1",
